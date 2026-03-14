@@ -1794,6 +1794,8 @@ updateNavActive();
     localStorage.removeItem('portfolioCMS');
     stored = null;
   }
+  // Always seed storage with the baked-in defaults so every load starts from DD
+  try{ localStorage.setItem('portfolioCMS', JSON.stringify(DD)); }catch(e){}
   if (stored && stored.logo) lcTl.innerHTML = stored.logo + '<br>// Loading';
   if(stored && !stored.videos) stored.videos = JSON.parse(JSON.stringify(DD.videos));
 
