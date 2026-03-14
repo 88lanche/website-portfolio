@@ -1243,7 +1243,11 @@ const DD = {"logo":"88lanche°","hero1":"Welcome to","hero2":"my one","hero3":"a
 
 // Force default data (ignore any stale localStorage) so all devices see the same content
 let D = JSON.parse(JSON.stringify(DD));
-localStorage.setItem('portfolioCMS', JSON.stringify(D));
+try{
+  localStorage.setItem('portfolioCMS', JSON.stringify(D));
+}catch(e){
+  // ignore storage errors (private mode / file://)
+}
 
 // Always start at top on load (disable browser scroll restore)
 if('scrollRestoration' in history) history.scrollRestoration = 'manual';
