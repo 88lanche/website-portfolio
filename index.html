@@ -77,6 +77,16 @@
   body.touch-device #cursor,
   body.touch-device #cursor-dot{display:none !important;}
   body.touch-device #cms-toggle{display:none !important;}
+  .protected-media{
+    -webkit-user-drag:none;
+    user-drag:none;
+    -webkit-user-select:none;
+    user-select:none;
+    -webkit-touch-callout:none;
+  }
+  img.protected-media{
+    pointer-events:none;
+  }
 
   /* NAV */
   nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:0 32px;height:60px;background:rgba(8,8,8,0.92);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,0.07);}
@@ -306,7 +316,11 @@
   .hold-wrap.done{opacity:0;pointer-events:none;}
   .hold-ring{width:100%;height:100%;transform:rotate(-90deg);}
   .hold-track{fill:none;stroke:rgba(255,255,255,.1);stroke-width:2;}
-  .hold-fill{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-dasharray:339.3;stroke-dashoffset:339.3;transition:stroke-dashoffset .05s linear;}
+  .hold-fill{
+    fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;
+    stroke-dasharray:339.3;stroke-dashoffset:339.3;
+    will-change:stroke-dashoffset;
+  }
   .hold-label{
     position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
     font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
@@ -553,8 +567,12 @@
   }
 
   /* LIGHTBOX */
-  #lightbox{position:fixed;inset:0;background:rgba(8,8,8,.97);z-index:300;display:none;align-items:center;justify-content:center;}
+  #lightbox{
+    position:fixed;inset:0;background:rgba(8,8,8,.97);z-index:300;display:none;align-items:center;justify-content:center;
+    transition:background .32s ease;
+  }
   #lightbox.open{display:flex;}
+  #lightbox:focus{outline:none;}
   .lb-frame{
     position:relative;
     padding:16px 16px 32px;
@@ -567,6 +585,8 @@
     flex-direction:column;
     align-items:center;
     gap:10px;
+    will-change:transform,opacity;
+    transition:transform .32s ease, opacity .32s ease;
   }
   .lb-media img,.lb-media video{
     max-width:90vw;
@@ -576,6 +596,7 @@
     background:#000;
     display:block;
   }
+  .lb-media.closeable{cursor:pointer;}
   .lb-media video{background:#000;}
   .lb-caption{font-size:12px;letter-spacing:.08em;opacity:.75;text-align:center;max-width:70ch;}
   .lb-close{position:absolute;top:24px;right:24px;background:none;border:1px solid rgba(255,255,255,.3);color:var(--white);font-family:var(--font-mono);font-size:11px;padding:8px 16px;cursor:pointer;letter-spacing:.1em;transition:all .2s;}
@@ -584,6 +605,8 @@
   .lb-nav:hover{opacity:1;}
   #lb-prev{left:24px;}#lb-next{right:24px;}
   .lb-count{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font-size:10px;opacity:.4;letter-spacing:.15em;}
+  @media (max-width:700px){
+  }
 
   /* ── WORK PAGE ── */
   .work-full-grid{
@@ -607,14 +630,36 @@
     border-radius:0;
     box-shadow:0 18px 36px rgba(0,0,0,.22);
   }
-  .work-full-card img{
+  .work-full-media{
     width:100%;
     aspect-ratio:2/3;
+    position:relative;
+    overflow:hidden;
+    background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01));
+  }
+  .work-full-media img{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:block;
     object-fit:cover;
     transition:transform .7s,filter .4s;
     filter:grayscale(100%) brightness(.6) contrast(.9);
   }
-  .work-full-card:hover img{transform:scale(1.06);filter:grayscale(0%) brightness(1) contrast(1.05);}
+  .work-full-card:hover .work-full-media img{transform:scale(1.06);filter:grayscale(0%) brightness(1) contrast(1.05);}
+  .work-full-placeholder{
+    position:absolute;
+    inset:0;
+    display:grid;
+    place-items:center;
+    font-family:var(--font-mono);
+    font-size:20px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,.78);
+    text-align:center;
+  }
   .work-full-ov{
     padding:16px;
     display:flex;
@@ -624,7 +669,7 @@
   .work-full-num{font-size:10px;letter-spacing:.18em;opacity:.35;text-transform:uppercase;}
   .work-full-title{font-family:var(--font-display);font-size:19px;font-weight:800;text-transform:uppercase;line-height:1;}
   .work-full-tag{font-size:11px;opacity:.55;}
-  .work-full-card.wide img{aspect-ratio:16/9;}
+  .work-full-card.wide .work-full-media{aspect-ratio:16/9;}
 
   /* ── PROJECT DETAIL ── */
   .proj-back{display:inline-flex;align-items:center;gap:8px;padding:24px 32px 0;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--white);text-decoration:none;opacity:.5;transition:opacity .2s,color .2s;cursor:pointer;background:none;border:none;font-family:var(--font-mono);}
@@ -1102,7 +1147,7 @@
 </div>
 
 <!-- LIGHTBOX -->
-<div id="lightbox">
+<div id="lightbox" tabindex="-1" aria-label="Image viewer">
   <button class="lb-close" onclick="closeLB()">✕ Close</button>
   <button class="lb-nav" id="lb-prev" onclick="lbNav(-1)">‹</button>
   <div class="lb-frame">
@@ -1195,7 +1240,7 @@
         <span class="profile-card-label">// Identity</span>
       </div>
       <div class="profile-card" id="pc-stats">
-        <span class="profile-card-label">// Stats</span>
+        <span class="profile-card-label">// Stats + Styles</span>
       </div>
     </div>
   </section>
@@ -1298,7 +1343,7 @@
 
 </script><script>
 // ── DEFAULT DATA ──
-const DD = {"logo":"88lanche°","hero1":"Welcome to","hero2":"my one","hero3":"and only","hero4":"digital portfolio","location":"Based in Queens, NYC","role":"Creator + Photos","accent":"#ffffff","email":"88lanche@gmail.com","aboutHeading":"Hello this is <em>Blanche Lin</em>","aboutP1":"Hi my name is Blanche.\n\nI’ve been practicing photography for over six years. What started as curiosity slowly became a way for me to pay closer attention to the world around me. Photography allows me to notice moments that might otherwise pass by unnoticed.\n\nI don’t limit myself to one type of photography. If something feels visually interesting or meaningful to me, I want to capture it. My work ranges from street scenes and travel to portraits and everyday moments that catch my eye.\nTravel plays a big role in how I see things. Being in new environments constantly reminds me how different places carry their own energy and stories.\n\nI work with Adobe Lightroom and Final Cut Pro, which I use to refine images and shape visual stories through editing and video.","aboutP2":"For me, photography isn’t just about documenting what something looked like. It’s about preserving what it felt like to be there in that moment.","aboutCta":"Email","aboutImg":"https://i.imgur.com/17dRL8H.jpeg","tagline":"Photographer","contactH1":"Let's","contactH2":"talk.","contactIntro":"Feel free to reach out for any project|collaboration or just to say hello.","contactEmail":"88lanche@gmail.com","contactSocial":"Instagram:https://instagram.com/88lanche\nYoutube:https://youtube.com/@88lanche?si=oTWhUxFejSQ1s9n-\nLinkedIn:https://www.linkedin.com/in/blanchelin/","poem":"Feel free to email if you want to take some shots|I'll email back to you with my thoughts|It'll take me a few hours, a few days to a week|Don't fret, I'm working on this as we speak:)","copyright":"©2026","socialLinks":"Instagram:https://instagram.com/88lanche\nYoutube:https://youtube.com/@88lanche?si=oTWhUxFejSQ1s9n-\nLinkedIn:https://www.linkedin.com/in/blanchelin/","projects":[{"title":"Mars","tag":"Travel","num":"01","img":"https://i.imgur.com/VJYiiwW.jpeg","wide":false,"desc":"My friends and I took a short trip to Death Valley National Park to go stargazing in particular. We flew for a weekend from New York to Los Angeles and ventured east, taking in amazing views from the surrounding basins, mountains, and desert. This collection includes portraits of my friends and I, Mars-like landscapes and some long exposed photos of the gold tier night sky. ","year":"2026","images":["https://i.imgur.com/1bmKPcb.jpeg","https://i.imgur.com/viFm9RH.jpeg","https://i.imgur.com/O1Pfa1b.jpeg","https://i.imgur.com/qWcwB9R.jpeg","https://i.imgur.com/NBJU51t.jpeg","https://i.imgur.com/40qSoHH.jpeg","https://i.imgur.com/Qrrqhkk.jpeg","https://i.imgur.com/QGfVHEz.jpeg","https://i.imgur.com/VJYiiwW.jpeg","https://i.imgur.com/3Eq5TVj.jpeg","https://i.imgur.com/87JzXOp.jpeg","https://i.imgur.com/bKPiP9C.jpeg","https://i.imgur.com/lHU2yHT.jpeg","https://i.imgur.com/29CMppK.jpeg","https://i.imgur.com/D96U88J.jpeg","https://i.imgur.com/WHlVoaB.jpeg","https://i.imgur.com/T2HHQ6z.jpeg","https://i.imgur.com/sx3IPq2.jpeg","https://i.imgur.com/pj4ecrD.jpeg","https://i.imgur.com/f1TwMw0.jpeg","https://i.imgur.com/XfeJE8s.jpeg","https://i.imgur.com/Sg1kOgN.jpeg","https://i.imgur.com/t031LwR.jpeg"],"location":"Los Angeles | Death Valley National Park, CA"},{"title":"Pumen","tag":"Volunteer","num":"02","img":"https://i.imgur.com/w9zdZnc.jpeg","wide":false,"desc":"I participated as a assistant teacher in an English and American exchange program overseas at Pumen Middle School in Kaohsiung, Taiwan. I was introduced to this program by 佛光山, an international Buddhist Organization, specifically the Young Adult Division that I am a part of. During the trip, I had the amazing opportunity to take many different types of photos including landscape, portraits, as well as abstract and experimental shots of my environment.","year":"2023 / 2025","images":["https://i.imgur.com/Nhpv4Bd.jpeg","https://i.imgur.com/gJJe4lH.jpeg","https://i.imgur.com/e8m1HxQ.jpeg","https://i.imgur.com/lEQp4W7.jpeg","https://i.imgur.com/tp25Pq8.jpeg","https://i.imgur.com/kizvb2I.jpeg","https://i.imgur.com/On0XWIb.jpeg","https://i.imgur.com/K7pOyxH.jpeg","https://i.imgur.com/hw2i6VV.jpeg","https://i.imgur.com/af6lkPG.jpeg","https://i.imgur.com/LIzySHI.jpeg","https://i.imgur.com/zw7XRA5.jpeg","https://i.imgur.com/qlEUYBx.jpeg","https://i.imgur.com/e8o3W42.jpeg","https://i.imgur.com/J1jKjdN.jpeg","https://i.imgur.com/Sz0hj2r.jpeg","https://i.imgur.com/bZQz2br.jpeg","https://i.imgur.com/24hO1Tl.jpeg","https://i.imgur.com/w9zdZnc.jpeg","https://i.imgur.com/3z7TdPy.jpeg","https://i.imgur.com/rRHi0Ok.jpeg","https://i.imgur.com/zmPROTg.jpeg","https://i.imgur.com/FvdWQL9.jpeg","https://i.imgur.com/Uy3RT3I.jpeg","https://i.imgur.com/d42tGZu.jpeg","https://i.imgur.com/7GKEZ55.jpeg","https://i.imgur.com/8h3Hvmh.jpeg"],"location":"Kaohsiung | Taipei, TW"},{"title":"Adoring Angels","tag":"Creative Direction","num":"03","img":"https://i.imgur.com/Vo2yrQu.jpeg","wide":false,"desc":"I had the opportunity to creatively shoot for Adoring Angels, an emerging clothing brand based in NYC. The project consisted of capturing multiple new unreleased products at a studio in Williamsburg. I directed, captured, and edited the photos below with the help of the team.","year":"2026","images":["https://i.imgur.com/tptzdnB.jpeg","https://i.imgur.com/bn3gdhN.jpeg","https://i.imgur.com/GAvm6WL.jpeg","https://i.imgur.com/cA4LNFC.jpeg","https://i.imgur.com/v1xJRfR.jpeg","https://i.imgur.com/RHs1DJh.jpeg","https://i.imgur.com/ioPWe0a.jpeg","https://i.imgur.com/x7L7smY.jpeg","https://i.imgur.com/k1evDRi.jpeg","https://i.imgur.com/Fndsdwh.jpeg","https://i.imgur.com/ZtLpHch.jpeg","https://i.imgur.com/vB21397.jpeg","https://i.imgur.com/24hx9he.jpeg","https://i.imgur.com/5z6dpdX.jpeg","https://i.imgur.com/sGA4OEt.jpeg","https://i.imgur.com/xb8OXRi.jpeg","https://i.imgur.com/QjpAed3.jpeg","https://i.imgur.com/6J1Db93.jpeg","https://i.imgur.com/LpmoWAR.jpeg","https://i.imgur.com/HAUU8aV.jpeg","https://i.imgur.com/O8ekdpS.jpeg","https://i.imgur.com/Hi2QKw4.jpeg","https://i.imgur.com/Vo2yrQu.jpeg","https://i.imgur.com/sWjG7g3.jpeg","https://i.imgur.com/ckTSdJT.jpeg","https://i.imgur.com/FvkyBbk.jpeg","https://i.imgur.com/MbryFBR.jpeg","https://i.imgur.com/LYlgsZ6.jpeg","https://i.imgur.com/i5LgzTJ.jpeg","https://i.imgur.com/7M4hIal.jpeg","https://i.imgur.com/m58LVza.jpeg","https://i.imgur.com/KEH7I9J.jpeg","https://i.imgur.com/0mDBDn9.jpeg"],"location":"Brooklyn , NY"},{"title":"Reunion","tag":"Memory","num":"04","img":"https://i.imgur.com/dJk2ClZ.jpeg","wide":false,"desc":"I went with my little sister to see my family on the other side of the world and got to experience what it was like living in China. It was my second time going back to the motherland of my parents. The first time I went, I was only 6 months old so I don’t remember much. I visited many cities with Wenzhou and Changsha to be the most memorable because both were with family. The collection below showcases the beauty of China in landscape and culture.","year":"2025","images":["https://i.imgur.com/dJk2ClZ.jpeg","https://i.imgur.com/V1jd1KN.jpeg","https://i.imgur.com/OJLKRU6.jpeg","https://i.imgur.com/QRIklbz.jpeg","https://i.imgur.com/h7mXlfw.jpeg","https://i.imgur.com/2hmaZcI.jpeg","https://i.imgur.com/RVqIc9f.jpeg","https://i.imgur.com/zMziOXf.jpeg","https://i.imgur.com/zQtc1Tq.jpeg","https://i.imgur.com/jQLkKAO.jpeg","https://i.imgur.com/adkYRy4.jpeg","https://i.imgur.com/Y9dez2b.jpeg","https://i.imgur.com/s0nuGlB.jpeg","https://i.imgur.com/JrMxysi.jpeg","https://i.imgur.com/WnsOAMl.jpeg","https://i.imgur.com/Cl81CAr.jpeg","https://i.imgur.com/3xhc3ol.jpeg","https://i.imgur.com/XoKYblp.jpeg","https://i.imgur.com/lpoE9ya.jpeg"],"location":"Changsha | Wenzhou , CN"},{"title":"Bittersauces","tag":"Photoshoot","num":"05","img":"https://i.imgur.com/xmcAroe.jpeg","wide":false,"desc":"Bittersauces is a small minimalistic clothing brand. I had the chance to take multiple shots of a single product for the first time which was different from Adoring Angels. Most of the photos were taken at a studio in Brooklyn, New York. ","year":"2024","images":["https://i.imgur.com/Taczk6l.jpeg","https://i.imgur.com/8wel8kr.jpeg","https://i.imgur.com/rigUZci.jpeg","https://i.imgur.com/uSJHwhE.jpeg","https://i.imgur.com/wrOVd95.jpeg","https://i.imgur.com/LU3mhXc.jpeg","https://i.imgur.com/0jAe9ci.jpeg","https://i.imgur.com/Gdu5eQA.jpeg","https://i.imgur.com/vIe6wzD.jpeg","https://i.imgur.com/bj4gDDf.jpeg","https://i.imgur.com/MzXTtrF.jpeg","https://i.imgur.com/8kJOMwd.jpeg","https://i.imgur.com/ycq06W8.jpeg","https://i.imgur.com/xmcAroe.jpeg","https://i.imgur.com/IYPTJsW.jpeg","https://i.imgur.com/WyUg4UM.jpeg","https://i.imgur.com/ezMqvbR.jpeg","https://i.imgur.com/sslDYSY.jpeg","https://i.imgur.com/gmon0g0.jpeg","https://i.imgur.com/3pMBVzX.jpeg","https://i.imgur.com/gMDAhYQ.jpeg","https://i.imgur.com/Z58HaBQ.jpeg","https://i.imgur.com/DczhWXt.jpeg","https://i.imgur.com/X5S8zfz.jpeg","https://i.imgur.com/Q5PsUow.jpeg","https://i.imgur.com/BFaR3WS.jpeg","https://i.imgur.com/tH0iq1I.jpeg","https://i.imgur.com/JCAWxE3.jpeg","https://i.imgur.com/uBW3rqa.jpeg","https://i.imgur.com/Q0crcW0.jpeg","https://i.imgur.com/dsGkdrU.jpeg","https://i.imgur.com/wLPDyIm.jpeg","https://i.imgur.com/bXnxvZP.jpeg","https://i.imgur.com/5Cq93KQ.jpeg","https://i.imgur.com/JabEtW7.jpeg","https://i.imgur.com/IjxHVTQ.jpeg"],"location":"Brooklyn , NY"},{"title":"Grad","tag":"Portrait","num":"06","img":"https://i.imgur.com/iB0Oi6u.jpeg","wide":false,"desc":"Throughout college, I've taken the initiative to shoot graduation portraits of my friends, both individually and as a group. The portraits go back to when I first started in 2023 to last year's graduating class of 2025. I am currently open to taking more grad photos this year!","year":"2023-2025","images":["https://i.imgur.com/qGcuBDz.jpeg","https://i.imgur.com/SWGWLTX.jpeg","https://i.imgur.com/glSdt3J.jpeg","https://i.imgur.com/JzIDBVH.jpeg","https://i.imgur.com/6zKgwa6.jpeg","https://i.imgur.com/oBO1cVw.jpeg","https://i.imgur.com/iToHuOk.jpeg","https://i.imgur.com/EQixV4i.jpeg","https://i.imgur.com/s2h9u0b.jpeg","https://i.imgur.com/ZDcIRAL.jpeg","https://i.imgur.com/1wcdc05.jpeg","https://i.imgur.com/2tx2DjE.jpeg","https://i.imgur.com/vjEf39n.jpeg","https://i.imgur.com/lT6IyK7.jpeg","https://i.imgur.com/v44rxwR.jpeg","https://i.imgur.com/zxSSHDm.jpeg","https://i.imgur.com/iEFmeWE.jpeg","https://i.imgur.com/9Norv5I.jpeg","https://i.imgur.com/F42cNsy.jpeg","https://i.imgur.com/HqgTrx4.jpeg","https://i.imgur.com/wkZpp3M.jpeg","https://i.imgur.com/nfg883F.jpeg","https://i.imgur.com/iB0Oi6u.jpeg","https://i.imgur.com/XTukVr5.jpeg","https://i.imgur.com/q91dJhq.jpeg","https://i.imgur.com/JIssH0Z.jpeg","https://i.imgur.com/gcRpdXd.jpeg"],"location":"New York , NY"},{"title":"Awaken Lion","tag":"Special Events","num":"07","img":"https://i.imgur.com/LbpbICa.jpeg","wide":false,"desc":"Awaken Lion is a professional lion dance team based in Queens, New York. I took photos of their street cleaning during Lunar New Year at the New World Mall in Flushing. Street cleaning is when the lions go into the stores and restaurants to ward off evil spirits and bring good luck for the business. ","year":"2026","images":["https://i.imgur.com/EMwidfm.jpeg","https://i.imgur.com/TalXmnN.jpeg","https://i.imgur.com/tOn17xi.jpeg","https://i.imgur.com/n6qMNyM.jpeg","https://i.imgur.com/QaaDiMy.jpeg","https://i.imgur.com/ewcra9k.jpeg","https://i.imgur.com/zNuLILj.jpeg","https://i.imgur.com/hkfCIc8.jpeg","https://i.imgur.com/BjEWJ5w.jpeg","https://i.imgur.com/KSnPIW1.jpeg","https://i.imgur.com/Ee0hEiS.jpeg","https://i.imgur.com/qdAfa42.jpeg","https://i.imgur.com/i8nUDBN.jpeg","https://i.imgur.com/fDNzfoj.jpeg","https://i.imgur.com/fzgEhFN.jpeg","https://i.imgur.com/eSDJnGR.jpeg","https://i.imgur.com/IP6EVvf.jpeg","https://i.imgur.com/fVP4UYE.jpeg","https://i.imgur.com/LbpbICa.jpeg"],"location":"Queens , NY"},{"title":"Coming Soon.","tag":"Coming Soon.","num":"08","img":"","wide":false,"desc":"Coming Soon.","year":"2026","images":[],"location":"Boston , MA"}],"types":[{"name":"Abstract | Portrait","desc":"Am I lucky with these shots or were they preplanned? Still a rookie uncaught with good hands."},{"name":"Architecture | Landscape","desc":"From pagodas to mountains, there are many places to be. Here's some of the most beautiful places to see."},{"name":"Special Events","desc":"They say life is a journey, you only live once. So record the big moments and put them in front."},{"name":"Product","desc":"When you plan on selling your piece, marketing is important, I make it with ease."}],"faqImg":"https://i.imgur.com/DLg380z.jpeg","faq":[{"q":"What services do you offer?","a":"I offer portrait, landscape, product, and event photography. I also do creative direction and retouching on Adobe Lightroom."},{"q":"What is your typical turnaround time?","a":"Depending on the project scope, it can take between a few hours to a week."},{"q":"Do you only take photos?","a":"At the moment, yes I only take and edit photos."}],"gallery":["https://i.imgur.com/QBHgOO9.jpeg","https://i.imgur.com/CKMXSyL.jpeg","https://i.imgur.com/7birMx9.jpeg","https://i.imgur.com/rnDL4Pa.jpeg","https://i.imgur.com/J7GeHHe.jpeg","https://i.imgur.com/AKO9e2X.jpeg","https://i.imgur.com/tbe6R9O.jpeg","https://i.imgur.com/tpFSNg3.jpeg","https://i.imgur.com/KJBF4R1.jpeg","https://i.imgur.com/Ton2ekM.jpeg","https://i.imgur.com/usFzELk.jpeg","https://i.imgur.com/4y1QUZt.jpeg","https://i.imgur.com/Hvevwi7.jpeg","https://i.imgur.com/UcljOhv.jpeg","https://i.imgur.com/nyHgvj4.jpeg","https://i.imgur.com/Kb3nV1F.jpeg","https://i.imgur.com/Sg1kOgN.jpeg","https://i.imgur.com/gcRpdXd.jpeg","https://i.imgur.com/JabEtW7.jpeg","https://i.imgur.com/tp25Pq8.jpeg"],"videos":[]};
+const DD = {"logo":"88lanche°","hero1":"Welcome to","hero2":"my one","hero3":"and only","hero4":"digital portfolio","location":"From Queens, NYC","role":"Creator + Photos","accent":"#ffffff","email":"88lanche@gmail.com","aboutHeading":"Hello this is <em>Blanche Lin</em>","aboutP1":"Hi my name is Blanche.\n\nI’ve been practicing photography for over six years. What started as curiosity slowly became a way for me to pay closer attention to the world around me. Photography allows me to notice moments that might otherwise pass by unnoticed.\n\nI don’t limit myself to one type of photography. If something feels visually interesting or meaningful to me, I want to capture it. My work ranges from street scenes and travel to portraits and everyday moments that catch my eye.\nTravel plays a big role in how I see things. Being in new environments constantly reminds me how different places carry their own energy and stories.\n\nI work with Adobe Lightroom and Final Cut Pro, which I use to refine images and shape visual stories through editing and video.","aboutP2":"For me, photography isn’t just about documenting what something looked like. It’s about preserving what it felt like to be there in that moment.","aboutCta":"Email","aboutImg":"https://i.imgur.com/17dRL8H.jpeg","tagline":"Photographer","contactH1":"Let's","contactH2":"talk.","contactIntro":"Feel free to reach out for any project|collaboration or just to say hello.","contactEmail":"88lanche@gmail.com","contactSocial":"Instagram:https://instagram.com/88lanche\nYoutube:https://youtube.com/@88lanche?si=oTWhUxFejSQ1s9n-\nLinkedIn:https://www.linkedin.com/in/blanchelin/","poem":"Feel free to email if you want to take some shots|I'll email back to you with my thoughts|It'll take me a few hours, a few days to a week|Don't fret, I'm working on this as we speak:)","copyright":"©2026","socialLinks":"Instagram:https://instagram.com/88lanche\nYoutube:https://youtube.com/@88lanche?si=oTWhUxFejSQ1s9n-\nLinkedIn:https://www.linkedin.com/in/blanchelin/","projects":[{"title":"Mars","tag":"Travel","num":"01","img":"https://i.imgur.com/VJYiiwW.jpeg","wide":false,"desc":"My friends and I took a short trip to Death Valley National Park to go stargazing in particular. We flew for a weekend from New York to Los Angeles and ventured east, taking in amazing views from the surrounding basins, mountains, and desert. This collection includes portraits of my friends and I, Mars-like landscapes and some long exposed photos of the gold tier night sky. ","year":"2026","images":["https://i.imgur.com/1bmKPcb.jpeg","https://i.imgur.com/viFm9RH.jpeg","https://i.imgur.com/O1Pfa1b.jpeg","https://i.imgur.com/qWcwB9R.jpeg","https://i.imgur.com/NBJU51t.jpeg","https://i.imgur.com/40qSoHH.jpeg","https://i.imgur.com/Qrrqhkk.jpeg","https://i.imgur.com/QGfVHEz.jpeg","https://i.imgur.com/VJYiiwW.jpeg","https://i.imgur.com/3Eq5TVj.jpeg","https://i.imgur.com/87JzXOp.jpeg","https://i.imgur.com/bKPiP9C.jpeg","https://i.imgur.com/lHU2yHT.jpeg","https://i.imgur.com/29CMppK.jpeg","https://i.imgur.com/D96U88J.jpeg","https://i.imgur.com/WHlVoaB.jpeg","https://i.imgur.com/T2HHQ6z.jpeg","https://i.imgur.com/sx3IPq2.jpeg","https://i.imgur.com/pj4ecrD.jpeg","https://i.imgur.com/f1TwMw0.jpeg","https://i.imgur.com/XfeJE8s.jpeg","https://i.imgur.com/Sg1kOgN.jpeg","https://i.imgur.com/t031LwR.jpeg"],"location":"Los Angeles | Death Valley National Park, CA"},{"title":"Pumen","tag":"Volunteer","num":"02","img":"https://i.imgur.com/w9zdZnc.jpeg","wide":false,"desc":"I participated as a assistant teacher in an English and American exchange program overseas at Pumen Middle School in Kaohsiung, Taiwan. I was introduced to this program by 佛光山, an international Buddhist Organization, specifically the Young Adult Division that I am a part of. During the trip, I had the amazing opportunity to take many different types of photos including landscape, portraits, as well as abstract and experimental shots of my environment.","year":"2023 / 2025","images":["https://i.imgur.com/Nhpv4Bd.jpeg","https://i.imgur.com/gJJe4lH.jpeg","https://i.imgur.com/e8m1HxQ.jpeg","https://i.imgur.com/lEQp4W7.jpeg","https://i.imgur.com/tp25Pq8.jpeg","https://i.imgur.com/kizvb2I.jpeg","https://i.imgur.com/On0XWIb.jpeg","https://i.imgur.com/K7pOyxH.jpeg","https://i.imgur.com/hw2i6VV.jpeg","https://i.imgur.com/af6lkPG.jpeg","https://i.imgur.com/LIzySHI.jpeg","https://i.imgur.com/zw7XRA5.jpeg","https://i.imgur.com/qlEUYBx.jpeg","https://i.imgur.com/e8o3W42.jpeg","https://i.imgur.com/J1jKjdN.jpeg","https://i.imgur.com/Sz0hj2r.jpeg","https://i.imgur.com/bZQz2br.jpeg","https://i.imgur.com/24hO1Tl.jpeg","https://i.imgur.com/w9zdZnc.jpeg","https://i.imgur.com/3z7TdPy.jpeg","https://i.imgur.com/rRHi0Ok.jpeg","https://i.imgur.com/zmPROTg.jpeg","https://i.imgur.com/FvdWQL9.jpeg","https://i.imgur.com/Uy3RT3I.jpeg","https://i.imgur.com/d42tGZu.jpeg","https://i.imgur.com/7GKEZ55.jpeg","https://i.imgur.com/8h3Hvmh.jpeg"],"location":"Kaohsiung | Taipei, TW"},{"title":"Adoring Angels","tag":"Creative Direction","num":"03","img":"https://i.imgur.com/Vo2yrQu.jpeg","wide":false,"desc":"I had the opportunity to creatively shoot for Adoring Angels, an emerging clothing brand based in NYC. The project consisted of capturing multiple new unreleased products at a studio in Williamsburg. I directed, captured, and edited the photos below with the help of the team.","year":"2026","images":["https://i.imgur.com/tptzdnB.jpeg","https://i.imgur.com/bn3gdhN.jpeg","https://i.imgur.com/GAvm6WL.jpeg","https://i.imgur.com/cA4LNFC.jpeg","https://i.imgur.com/v1xJRfR.jpeg","https://i.imgur.com/RHs1DJh.jpeg","https://i.imgur.com/ioPWe0a.jpeg","https://i.imgur.com/x7L7smY.jpeg","https://i.imgur.com/k1evDRi.jpeg","https://i.imgur.com/Fndsdwh.jpeg","https://i.imgur.com/ZtLpHch.jpeg","https://i.imgur.com/vB21397.jpeg","https://i.imgur.com/24hx9he.jpeg","https://i.imgur.com/5z6dpdX.jpeg","https://i.imgur.com/sGA4OEt.jpeg","https://i.imgur.com/xb8OXRi.jpeg","https://i.imgur.com/QjpAed3.jpeg","https://i.imgur.com/6J1Db93.jpeg","https://i.imgur.com/LpmoWAR.jpeg","https://i.imgur.com/HAUU8aV.jpeg","https://i.imgur.com/O8ekdpS.jpeg","https://i.imgur.com/Hi2QKw4.jpeg","https://i.imgur.com/Vo2yrQu.jpeg","https://i.imgur.com/sWjG7g3.jpeg","https://i.imgur.com/ckTSdJT.jpeg","https://i.imgur.com/FvkyBbk.jpeg","https://i.imgur.com/MbryFBR.jpeg","https://i.imgur.com/LYlgsZ6.jpeg","https://i.imgur.com/i5LgzTJ.jpeg","https://i.imgur.com/7M4hIal.jpeg","https://i.imgur.com/m58LVza.jpeg","https://i.imgur.com/KEH7I9J.jpeg","https://i.imgur.com/0mDBDn9.jpeg"],"location":"Brooklyn , NY"},{"title":"Reunion","tag":"Memory","num":"04","img":"https://i.imgur.com/dJk2ClZ.jpeg","wide":false,"desc":"I went with my little sister to see my family on the other side of the world and got to experience what it was like living in China. It was my second time going back to the motherland of my parents. The first time I went, I was only 6 months old so I don’t remember much. I visited many cities with Wenzhou and Changsha to be the most memorable because both were with family. The collection below showcases the beauty of China in landscape and culture.","year":"2025","images":["https://i.imgur.com/dJk2ClZ.jpeg","https://i.imgur.com/V1jd1KN.jpeg","https://i.imgur.com/OJLKRU6.jpeg","https://i.imgur.com/QRIklbz.jpeg","https://i.imgur.com/h7mXlfw.jpeg","https://i.imgur.com/2hmaZcI.jpeg","https://i.imgur.com/RVqIc9f.jpeg","https://i.imgur.com/zMziOXf.jpeg","https://i.imgur.com/zQtc1Tq.jpeg","https://i.imgur.com/jQLkKAO.jpeg","https://i.imgur.com/adkYRy4.jpeg","https://i.imgur.com/Y9dez2b.jpeg","https://i.imgur.com/s0nuGlB.jpeg","https://i.imgur.com/JrMxysi.jpeg","https://i.imgur.com/WnsOAMl.jpeg","https://i.imgur.com/Cl81CAr.jpeg","https://i.imgur.com/3xhc3ol.jpeg","https://i.imgur.com/XoKYblp.jpeg","https://i.imgur.com/lpoE9ya.jpeg"],"location":"Changsha | Wenzhou , CN"},{"title":"Bittersauces","tag":"Photoshoot","num":"05","img":"https://i.imgur.com/xmcAroe.jpeg","wide":false,"desc":"Bittersauces is a small minimalistic clothing brand. I had the chance to take multiple shots of a single product for the first time which was different from Adoring Angels. Most of the photos were taken at a studio in Brooklyn, New York. ","year":"2024","images":["https://i.imgur.com/Taczk6l.jpeg","https://i.imgur.com/8wel8kr.jpeg","https://i.imgur.com/rigUZci.jpeg","https://i.imgur.com/uSJHwhE.jpeg","https://i.imgur.com/wrOVd95.jpeg","https://i.imgur.com/LU3mhXc.jpeg","https://i.imgur.com/0jAe9ci.jpeg","https://i.imgur.com/Gdu5eQA.jpeg","https://i.imgur.com/vIe6wzD.jpeg","https://i.imgur.com/bj4gDDf.jpeg","https://i.imgur.com/MzXTtrF.jpeg","https://i.imgur.com/8kJOMwd.jpeg","https://i.imgur.com/ycq06W8.jpeg","https://i.imgur.com/xmcAroe.jpeg","https://i.imgur.com/IYPTJsW.jpeg","https://i.imgur.com/WyUg4UM.jpeg","https://i.imgur.com/ezMqvbR.jpeg","https://i.imgur.com/sslDYSY.jpeg","https://i.imgur.com/gmon0g0.jpeg","https://i.imgur.com/3pMBVzX.jpeg","https://i.imgur.com/gMDAhYQ.jpeg","https://i.imgur.com/Z58HaBQ.jpeg","https://i.imgur.com/DczhWXt.jpeg","https://i.imgur.com/X5S8zfz.jpeg","https://i.imgur.com/Q5PsUow.jpeg","https://i.imgur.com/BFaR3WS.jpeg","https://i.imgur.com/tH0iq1I.jpeg","https://i.imgur.com/JCAWxE3.jpeg","https://i.imgur.com/uBW3rqa.jpeg","https://i.imgur.com/Q0crcW0.jpeg","https://i.imgur.com/dsGkdrU.jpeg","https://i.imgur.com/wLPDyIm.jpeg","https://i.imgur.com/bXnxvZP.jpeg","https://i.imgur.com/5Cq93KQ.jpeg","https://i.imgur.com/JabEtW7.jpeg","https://i.imgur.com/IjxHVTQ.jpeg"],"location":"Brooklyn , NY"},{"title":"Grad","tag":"Portrait","num":"06","img":"https://i.imgur.com/iB0Oi6u.jpeg","wide":false,"desc":"Throughout college, I've taken the initiative to shoot graduation portraits of my friends, both individually and as a group. The portraits go back to when I first started in 2023 to last year's graduating class of 2025. I am currently open to taking more grad photos this year!","year":"2023-2025","images":["https://i.imgur.com/qGcuBDz.jpeg","https://i.imgur.com/SWGWLTX.jpeg","https://i.imgur.com/glSdt3J.jpeg","https://i.imgur.com/JzIDBVH.jpeg","https://i.imgur.com/6zKgwa6.jpeg","https://i.imgur.com/oBO1cVw.jpeg","https://i.imgur.com/iToHuOk.jpeg","https://i.imgur.com/EQixV4i.jpeg","https://i.imgur.com/s2h9u0b.jpeg","https://i.imgur.com/ZDcIRAL.jpeg","https://i.imgur.com/1wcdc05.jpeg","https://i.imgur.com/2tx2DjE.jpeg","https://i.imgur.com/vjEf39n.jpeg","https://i.imgur.com/lT6IyK7.jpeg","https://i.imgur.com/v44rxwR.jpeg","https://i.imgur.com/zxSSHDm.jpeg","https://i.imgur.com/iEFmeWE.jpeg","https://i.imgur.com/9Norv5I.jpeg","https://i.imgur.com/F42cNsy.jpeg","https://i.imgur.com/HqgTrx4.jpeg","https://i.imgur.com/wkZpp3M.jpeg","https://i.imgur.com/nfg883F.jpeg","https://i.imgur.com/iB0Oi6u.jpeg","https://i.imgur.com/XTukVr5.jpeg","https://i.imgur.com/q91dJhq.jpeg","https://i.imgur.com/JIssH0Z.jpeg","https://i.imgur.com/gcRpdXd.jpeg"],"location":"New York , NY"},{"title":"Awaken Lion","tag":"Special Events","num":"07","img":"https://i.imgur.com/LbpbICa.jpeg","wide":false,"desc":"Awaken Lion is a professional lion dance team based in Queens, New York. I took photos of their street cleaning during Lunar New Year at the New World Mall in Flushing. Street cleaning is when the lions go into the stores and restaurants to ward off evil spirits and bring good luck for the business. ","year":"2026","images":["https://i.imgur.com/EMwidfm.jpeg","https://i.imgur.com/TalXmnN.jpeg","https://i.imgur.com/tOn17xi.jpeg","https://i.imgur.com/n6qMNyM.jpeg","https://i.imgur.com/QaaDiMy.jpeg","https://i.imgur.com/ewcra9k.jpeg","https://i.imgur.com/zNuLILj.jpeg","https://i.imgur.com/hkfCIc8.jpeg","https://i.imgur.com/BjEWJ5w.jpeg","https://i.imgur.com/KSnPIW1.jpeg","https://i.imgur.com/Ee0hEiS.jpeg","https://i.imgur.com/qdAfa42.jpeg","https://i.imgur.com/i8nUDBN.jpeg","https://i.imgur.com/fDNzfoj.jpeg","https://i.imgur.com/fzgEhFN.jpeg","https://i.imgur.com/eSDJnGR.jpeg","https://i.imgur.com/IP6EVvf.jpeg","https://i.imgur.com/fVP4UYE.jpeg","https://i.imgur.com/LbpbICa.jpeg"],"location":"Queens , NY"},{"title":"Coming Soon.","tag":"Coming Soon.","num":"08","img":"","wide":false,"desc":"Coming Soon.","year":"2026","images":[],"location":"Boston , MA"}],"types":[{"name":"Abstract | Portrait","desc":"Am I lucky with these shots or were they preplanned? Still a rookie uncaught with good hands."},{"name":"Architecture | Landscape","desc":"From pagodas to mountains, there are many places to be. Here's some of the most beautiful places to see."},{"name":"Special Events","desc":"They say life is a journey, you only live once. So record the big moments and put them in front."},{"name":"Product","desc":"When you plan on selling your piece, marketing is important, I make it with ease."}],"faqImg":"https://i.imgur.com/DLg380z.jpeg","faq":[{"q":"What services do you offer?","a":"I offer portrait, landscape, product, and event photography. I also do creative direction and retouching on Adobe Lightroom."},{"q":"What is your typical turnaround time?","a":"Depending on the project scope, it can take between a few hours to a week."},{"q":"Do you only take photos?","a":"At the moment, yes I only take and edit photos."}],"gallery":["https://i.imgur.com/QBHgOO9.jpeg","https://i.imgur.com/CKMXSyL.jpeg","https://i.imgur.com/7birMx9.jpeg","https://i.imgur.com/rnDL4Pa.jpeg","https://i.imgur.com/J7GeHHe.jpeg","https://i.imgur.com/AKO9e2X.jpeg","https://i.imgur.com/tbe6R9O.jpeg","https://i.imgur.com/tpFSNg3.jpeg","https://i.imgur.com/KJBF4R1.jpeg","https://i.imgur.com/Ton2ekM.jpeg","https://i.imgur.com/usFzELk.jpeg","https://i.imgur.com/4y1QUZt.jpeg","https://i.imgur.com/Hvevwi7.jpeg","https://i.imgur.com/UcljOhv.jpeg","https://i.imgur.com/nyHgvj4.jpeg","https://i.imgur.com/Kb3nV1F.jpeg","https://i.imgur.com/Sg1kOgN.jpeg","https://i.imgur.com/gcRpdXd.jpeg","https://i.imgur.com/JabEtW7.jpeg","https://i.imgur.com/tp25Pq8.jpeg"],"videos":[]};
 
 // Force default data (ignore any stale localStorage) so all devices see the same content
 let D = JSON.parse(JSON.stringify(DD));
@@ -1335,7 +1380,7 @@ function go(page,projIdx){
     if(page==='profile')renderProfilePage();
     if(page==='work')renderWorkPage();
     if(page==='contact')renderContactPage();
-    setTimeout(()=>{observeFadeUps();addHoverTargets();},50);
+    setTimeout(()=>{observeFadeUps();addHoverTargets();protectMedia();},50);
   },150);
 }
 function updateNavActive(){
@@ -1372,6 +1417,17 @@ function renderFooter(sfx){
   document.getElementById('footer-social-'+sfx).innerHTML=parseLinks(D.socialLinks).map(([l,u])=>`<li><a href="${u}" target="_blank">${l}</a></li>`).join('');
 }
 function parseLinks(s){return(s||'').split('\n').map(l=>{const[a,...b]=l.split(':');return[a.trim(),b.join(':').trim()];}).filter(([a])=>a);}
+const PROJECT_CARD_POSITIONS={
+  '01':'50% 68%',
+  '02':'50% 62%',
+  '03':'50% 52%',
+  '04':'50% 70%',
+  '07':'50% 56%'
+};
+function getProjectCardPosition(p,i){
+  const key=p.num||String(i+1).padStart(2,'0');
+  return p.coverPos||PROJECT_CARD_POSITIONS[key]||'50% 50%';
+}
 
 // ── HOME ──
 function renderHome(){
@@ -1393,7 +1449,7 @@ function renderHome(){
   // work preview (up to 5)
   document.getElementById('home-work-grid').innerHTML=D.projects.slice(0,4).map((p,i)=>`
     <div class="work-card ${p.wide?'wide':''} fade-up" onclick="go('project',${i})">
-      <img src="${p.img}" alt="${p.title}" loading="lazy">
+      <img src="${p.img}" alt="${p.title}" loading="lazy" style="object-position:${getProjectCardPosition(p,i)};">
       <div class="work-card-meta">
         <div class="work-card-num">${p.num ? `(${p.num})` : `(${String(i+1).padStart(2,'0')})`}</div>
         <div class="work-card-title">${p.title}</div>
@@ -1417,6 +1473,7 @@ const SHAPES=['square','portrait','portrait','landscape','square','square','land
 const CAPTIONS=['35mm','shot on film','kodak gold','analog','found','untitled','iso 400','exposed'];
 const PROFILE_UNLOCK_KEY='profileUnlocked';
 const HOLD_C=2*Math.PI*54; // ~339.3
+const HOLD_MS=900;
 let lbImgs=[],lbIdx=0;
 function revealHero(){
   if(revealHero._done)return;
@@ -1455,7 +1512,7 @@ function renderProfilePage(){
   // Stats card
   const types=D.types||[];
   document.getElementById('pc-stats').innerHTML=`
-    <span class="profile-card-label">// Stats</span>
+    <span class="profile-card-label">// Stats + Styles</span>
     ${types.slice(0,4).map(t=>`<div class="stat-row"><span class="stat-label">${t.name}</span><span class="stat-val">${t.desc}</span></div>`).join('')}
     <div class="stat-row"><span class="stat-label">Projects</span><span class="stat-val">${D.projects.length}</span></div>
     <div class="stat-row"><span class="stat-label">Gallery</span><span class="stat-val">${D.gallery.length} shots</span></div>`;
@@ -1466,7 +1523,13 @@ function renderProfilePage(){
 }
 
 // ── HOLD INTERACTION ──
-let holdAF=null,holdActive=false,holdProgress=0;
+let holdAF=null,holdActive=false,holdProgress=0,holdStartTs=0;
+let lbGestureStartX=0,lbGestureStartY=0,lbGestureCurrentX=0,lbGestureCurrentY=0,lbDragging=false,lbWheelAccumX=0,lbWheelAccumY=0,lbWheelTimer=null,lbCloseTimer=null,lbGestureMoved=false,lbSuppressClickUntil=0;
+const LB_NAV_DIST=52;
+const LB_CLOSE_DIST=80;
+const LB_WHEEL_NAV_DIST=90;
+const LB_WHEEL_CLOSE_DIST=165;
+const LB_DISMISS_MS=320;
 function revealProfileCards(){
   const wrap=ge('hold-wrap'),cards=ge('profile-cards'),fill=ge('hold-fill'),spacer=document.querySelector('.hold-spacer');
   if(!wrap||!cards||!fill)return;
@@ -1490,15 +1553,20 @@ function initHold(){
   const fill=document.getElementById('hold-fill');
   const cards=document.getElementById('profile-cards');
   function startHold(){
-    if(cards.classList.contains('revealed'))return;
-    holdActive=true;holdProgress=0;
-    function tick(){
+    if(cards.classList.contains('revealed')||holdActive)return;
+    holdActive=true;
+    holdProgress=0;
+    holdStartTs=0;
+    fill.style.strokeDashoffset=HOLD_C;
+    function tick(ts){
       if(!holdActive)return;
-      holdProgress=Math.min(holdProgress+0.02,1);
+      if(!holdStartTs)holdStartTs=ts;
+      holdProgress=Math.min((ts-holdStartTs)/HOLD_MS,1);
       fill.style.strokeDashoffset=HOLD_C*(1-holdProgress);
       if(holdProgress>=1){
         holdActive=false;
-        revealProfileCards();
+        fill.style.strokeDashoffset='0';
+        requestAnimationFrame(()=>revealProfileCards());
         return;
       }
       holdAF=requestAnimationFrame(tick);
@@ -1507,7 +1575,9 @@ function initHold(){
   }
   function stopHold(){
     holdActive=false;
+    holdStartTs=0;
     if(holdAF)cancelAnimationFrame(holdAF);
+    holdAF=null;
     if(holdProgress<1){
       holdProgress=0;
       fill.style.strokeDashoffset=HOLD_C;
@@ -1519,35 +1589,242 @@ function initHold(){
   wrap.addEventListener('touchstart',e=>{e.preventDefault();startHold();});
   wrap.addEventListener('touchend',stopHold);
 }
+function getLBFrame(){return document.querySelector('#lightbox .lb-frame');}
+function isTypingTarget(el){
+  return !!(el&&((/^(INPUT|TEXTAREA|SELECT)$/).test(el.tagName)||el.isContentEditable));
+}
+function setLBVisualOffset(animate){
+  const lightbox=ge('lightbox');
+  const frame=getLBFrame();
+  if(!lightbox||!frame)return;
+  if(!animate)return;
+  frame.style.transform='scale(.985)';
+  frame.style.opacity='0';
+  lightbox.style.background='rgba(8,8,8,0)';
+}
+function resetLBVisual(){
+  const lightbox=ge('lightbox');
+  const frame=getLBFrame();
+  if(!lightbox||!frame)return;
+  frame.style.transform='';
+  frame.style.opacity='';
+  lightbox.style.background='';
+}
+function finalizeLBClose(){
+  const lightbox=ge('lightbox');
+  clearTimeout(lbCloseTimer);
+  lbCloseTimer=null;
+  cancelLBGesture(true);
+  resetLBWheelGesture();
+  lightbox.classList.remove('open');
+  document.body.style.overflow='';
+  resetLBVisual();
+}
+function startLBGesture(x,y){
+  const media=ge('lb-media');
+  if(media.dataset.kind!=='image')return false;
+  lbDragging=true;
+  lbGestureMoved=false;
+  lbGestureStartX=x;
+  lbGestureStartY=y;
+  lbGestureCurrentX=x;
+  lbGestureCurrentY=y;
+  return true;
+}
+function updateLBGesture(x,y){
+  if(!lbDragging)return;
+  lbGestureCurrentX=x;
+  lbGestureCurrentY=y;
+  const dx=lbGestureCurrentX-lbGestureStartX;
+  const dy=lbGestureCurrentY-lbGestureStartY;
+  if(Math.abs(dx)>8||Math.abs(dy)>8)lbGestureMoved=true;
+}
+function finishLBGesture(){
+  if(!lbDragging)return;
+  const dx=lbGestureCurrentX-lbGestureStartX;
+  const dy=lbGestureCurrentY-lbGestureStartY;
+  const absX=Math.abs(dx);
+  const absY=Math.abs(dy);
+  lbDragging=false;
+  lbGestureMoved=false;
+  lbGestureStartX=0;
+  lbGestureStartY=0;
+  lbGestureCurrentX=0;
+  lbGestureCurrentY=0;
+  if(absX>absY&&absX>LB_NAV_DIST){
+    lbSuppressClickUntil=Date.now()+400;
+    lbNav(dx<0?1:-1);
+    return;
+  }
+  if(absY>LB_CLOSE_DIST){
+    lbSuppressClickUntil=Date.now()+400;
+    closeLB(true,dy);
+  }else{
+    if(absX>8||absY>8)lbSuppressClickUntil=Date.now()+400;
+  }
+}
+function cancelLBGesture(skipReset){
+  if(!lbDragging)return;
+  lbDragging=false;
+  lbGestureMoved=false;
+  lbGestureStartX=0;
+  lbGestureStartY=0;
+  lbGestureCurrentX=0;
+  lbGestureCurrentY=0;
+  if(!skipReset)resetLBVisual();
+}
+function resetLBWheelGesture(){
+  lbWheelAccumX=0;
+  lbWheelAccumY=0;
+  if(lbWheelTimer){
+    clearTimeout(lbWheelTimer);
+    lbWheelTimer=null;
+  }
+}
+function updateLBWheelGesture(dx,dy){
+  const media=ge('lb-media');
+  if(media.dataset.kind!=='image')return;
+  lbWheelAccumX+=dx;
+  lbWheelAccumY+=dy;
+  if(lbWheelTimer)clearTimeout(lbWheelTimer);
+  lbWheelTimer=setTimeout(()=>{
+    lbWheelAccumX=0;
+    lbWheelAccumY=0;
+    lbWheelTimer=null;
+  },180);
+  if(Math.abs(lbWheelAccumX)>Math.abs(lbWheelAccumY)&&Math.abs(lbWheelAccumX)>LB_WHEEL_NAV_DIST){
+    const navDir=lbWheelAccumX>0?1:-1;
+    resetLBWheelGesture();
+    lbSuppressClickUntil=Date.now()+400;
+    lbNav(navDir);
+    return;
+  }
+  if(Math.abs(lbWheelAccumY)>Math.abs(lbWheelAccumX)&&Math.abs(lbWheelAccumY)>LB_WHEEL_CLOSE_DIST){
+    const closeDy=lbWheelAccumY;
+    resetLBWheelGesture();
+    lbSuppressClickUntil=Date.now()+400;
+    closeLB(true,closeDy);
+  }
+}
 function openLB(i){
   lbIdx=i;
   const media=ge('lb-media'),cap=ge('lb-cap'),cnt=ge('lb-count'),src=lbImgs[i];
+  cancelLBGesture(true);
+  resetLBWheelGesture();
+  clearTimeout(lbCloseTimer);
+  lbCloseTimer=null;
+  lbSuppressClickUntil=0;
+  resetLBVisual();
   if(VIDEO_EXT.test(src)){
     media.innerHTML=`<video src=\"${src}\" controls autoplay playsinline style=\"max-width:90vw;max-height:82vh;\"></video>`;
+    media.classList.remove('closeable');
+    media.dataset.kind='video';
     cap.textContent='Video';
   }else{
     media.innerHTML=`<img src=\"${src}\" alt=\"Gallery item ${i+1}\">`;
+    media.classList.add('closeable');
+    media.dataset.kind='image';
     cap.textContent='';
   }
   cnt.textContent=`${i+1} / ${lbImgs.length}`;
+  protectMedia();
   ge('lightbox').classList.add('open');
   document.body.style.overflow='hidden';
+  requestAnimationFrame(()=>{
+    const lightbox=ge('lightbox');
+    if(lightbox&&typeof lightbox.focus==='function')lightbox.focus({preventScroll:true});
+  });
 }
-function closeLB(){ge('lightbox').classList.remove('open');document.body.style.overflow='';}
+function closeLB(animate){
+  const lightbox=ge('lightbox');
+  if(!lightbox.classList.contains('open'))return;
+  clearTimeout(lbCloseTimer);
+  if(animate){
+    cancelLBGesture(true);
+    resetLBWheelGesture();
+    setLBVisualOffset(true);
+    lbCloseTimer=setTimeout(()=>finalizeLBClose(),LB_DISMISS_MS);
+    return;
+  }
+  finalizeLBClose();
+}
 function lbNav(d){
   lbIdx=(lbIdx+d+lbImgs.length)%lbImgs.length;
   const media=ge('lb-media'),cap=ge('lb-cap'),cnt=ge('lb-count'),src=lbImgs[lbIdx];
+  cancelLBGesture(true);
+  resetLBWheelGesture();
+  clearTimeout(lbCloseTimer);
+  lbCloseTimer=null;
+  resetLBVisual();
   if(VIDEO_EXT.test(src)){
     media.innerHTML=`<video src=\"${src}\" controls autoplay playsinline style=\"max-width:90vw;max-height:82vh;\"></video>`;
+    media.classList.remove('closeable');
+    media.dataset.kind='video';
     cap.textContent='Video';
   }else{
     media.innerHTML=`<img src=\"${src}\" alt=\"Gallery item ${lbIdx+1}\">`;
+    media.classList.add('closeable');
+    media.dataset.kind='image';
     cap.textContent='';
   }
   cnt.textContent=`${lbIdx+1} / ${lbImgs.length}`;
+  protectMedia();
 }
-document.addEventListener('keydown',e=>{if(!document.getElementById('lightbox').classList.contains('open'))return;if(e.key==='ArrowLeft')lbNav(-1);if(e.key==='ArrowRight')lbNav(1);if(e.key==='Escape')closeLB();});
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('lightbox').classList.contains('open'))return;
+  if(isTypingTarget(e.target))return;
+  if(e.key==='ArrowLeft'){
+    e.preventDefault();
+    lbNav(-1);
+    return;
+  }
+  if(e.key==='ArrowRight'){
+    e.preventDefault();
+    lbNav(1);
+    return;
+  }
+  if(e.key==='Escape'){
+    e.preventDefault();
+    closeLB();
+  }
+});
 document.getElementById('lightbox').addEventListener('click',e=>{if(e.target===document.getElementById('lightbox'))closeLB();});
+document.getElementById('lb-media').addEventListener('click',e=>{
+  const media=ge('lb-media');
+  if(Date.now()<lbSuppressClickUntil){
+    e.preventDefault();
+    return;
+  }
+  if(media.dataset.kind==='image')closeLB();
+});
+document.getElementById('lb-media').addEventListener('touchstart',e=>{
+  if(e.touches.length!==1)return;
+  startLBGesture(e.touches[0].clientX,e.touches[0].clientY);
+},{
+  passive:true
+});
+document.getElementById('lb-media').addEventListener('touchmove',e=>{
+  const media=ge('lb-media');
+  if(lbDragging&&media.dataset.kind==='image')e.preventDefault();
+  updateLBGesture(e.touches[0].clientX,e.touches[0].clientY);
+},{
+  passive:false
+});
+document.getElementById('lb-media').addEventListener('touchend',finishLBGesture);
+document.getElementById('lb-media').addEventListener('touchcancel',cancelLBGesture);
+document.getElementById('lb-media').addEventListener('mousedown',e=>{
+  if(e.button!==0)return;
+  startLBGesture(e.clientX,e.clientY);
+});
+document.getElementById('lb-media').addEventListener('wheel',e=>{
+  const media=ge('lb-media');
+  if(media.dataset.kind!=='image')return;
+  e.preventDefault();
+  updateLBWheelGesture(e.deltaX,e.deltaY);
+},{passive:false});
+window.addEventListener('mousemove',e=>updateLBGesture(e.clientX,e.clientY));
+window.addEventListener('mouseup',finishLBGesture);
+window.addEventListener('blur',()=>cancelLBGesture());
 // Touch device detection: show images in full color (hover not available)
 if(window.matchMedia && window.matchMedia('(hover: none)').matches){
   document.body.classList.add('touch-device');
@@ -1556,15 +1833,26 @@ if(window.matchMedia && window.matchMedia('(hover: none)').matches){
 document.addEventListener('keydown',e=>{
   if(curPage!=='project')return;
   if(document.getElementById('lightbox').classList.contains('open'))return;
-  if(e.key==='ArrowLeft') navProject(-1);
-  if(e.key==='ArrowRight') navProject(1);
+  if(isTypingTarget(e.target))return;
+  if(e.key==='ArrowLeft'){
+    e.preventDefault();
+    navProject(-1);
+  }
+  if(e.key==='ArrowRight'){
+    e.preventDefault();
+    navProject(1);
+  }
 });
 
 // ── WORK PAGE ──
 function renderWorkPage(){
   document.getElementById('work-full-grid').innerHTML=D.projects.map((p,i)=>`
     <div class="work-full-card ${p.wide?'wide':''} fade-up" onclick="go('project',${i})">
-      <img src="${p.img}" alt="${p.title}" loading="lazy">
+      <div class="work-full-media">
+        ${p.img
+          ? `<img src="${p.img}" alt="${p.title}" loading="lazy" style="object-position:${getProjectCardPosition(p,i)};">`
+          : `<div class="work-full-placeholder">${p.title||'Coming Soon.'}</div>`}
+      </div>
       <div class="work-full-ov">
         <div class="work-full-num">${p.num ? `(${p.num})` : `(${String(i+1).padStart(2,'0')})`}</div>
         <div class="work-full-title">${p.title}</div>
@@ -1718,7 +2006,7 @@ function saveAll(){
   if(curPage==='project')renderProject(curProj);
   if(curPage==='contact')renderContactPage();
   showToast('✓ Changes saved');
-  setTimeout(()=>{observeFadeUps();addHoverTargets();},100);
+  setTimeout(()=>{observeFadeUps();addHoverTargets();protectMedia();},100);
 }
 
 // ── AUTH ──
@@ -1753,6 +2041,15 @@ function sv(id,v){ge(id).value=v;}
 function esc(s){return String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function showToast(m){const t=ge('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 function toggleFAQ(i){document.querySelectorAll('.faq-item')[i].classList.toggle('open');}
+function protectMedia(){
+  document.querySelectorAll('img,video').forEach(el=>{
+    if(el.closest('#cms-panel,#cms-login'))return;
+    el.classList.add('protected-media');
+    el.setAttribute('draggable','false');
+    const host=el.closest('button,a,.record-frame,.work-card,.work-full-card,.wall-photo,.faq-img,.profile-card,.masonry-item,.lb-media')||el.parentElement;
+    if(host&&!host.closest('#cms-panel,#cms-login'))host.setAttribute('data-protected-host','true');
+  });
+}
 function observeFadeUps(){
   const obs=new IntersectionObserver(entries=>{
     entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*80);obs.unobserve(e.target);}});
@@ -1773,13 +2070,25 @@ function addHoverTargets(){
     el.addEventListener('mouseleave',()=>{curEl.classList.remove('hover');dotEl.classList.remove('hover');});
   });
 }
+document.addEventListener('contextmenu',e=>{
+  const media=e.target.closest('img.protected-media,video.protected-media,[data-protected-host="true"]');
+  if(media)e.preventDefault();
+},true);
+document.addEventListener('dragstart',e=>{
+  const media=e.target.closest('img.protected-media,video.protected-media,[data-protected-host="true"]');
+  if(media)e.preventDefault();
+},true);
+document.addEventListener('selectstart',e=>{
+  const media=e.target.closest('img.protected-media,video.protected-media,[data-protected-host="true"]');
+  if(media)e.preventDefault();
+},true);
 
 function startSite(){
   if(startSite._done)return;
   renderHome();
   curPage='home';
   updateNavActive();
-  setTimeout(()=>{observeFadeUps();addHoverTargets();},50);
+  setTimeout(()=>{observeFadeUps();addHoverTargets();protectMedia();},50);
   startSite._done=true;
 }
 
