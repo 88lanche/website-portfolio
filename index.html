@@ -228,8 +228,8 @@
     opacity:0;
     transform:translate3d(var(--tile-shift-x,0px),var(--tile-shift-y,18px),0) scale(.96);
     transition:
-      opacity .72s ease,
-      transform .72s cubic-bezier(.2,.8,.2,1);
+      opacity .9s ease,
+      transform .9s cubic-bezier(.2,.8,.2,1);
     transition-delay:var(--tile-delay,0ms);
   }
   body.touch-device .record-salon.mobile-intro .record-frame.tile-in{
@@ -1565,12 +1565,12 @@ function runMobileHeroIntro(){
     .map(frame=>({frame,order:Math.random()}))
     .sort((a,b)=>a.order-b.order)
     .forEach(({frame},i)=>{
-      frame.style.setProperty('--tile-delay',`${i*58}ms`);
+      frame.style.setProperty('--tile-delay',`${i*86}ms`);
     });
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
     frames.forEach(frame=>frame.classList.add('tile-in'));
   }));
-  const introMs=((frames.length-1)*58)+720+240;
+  const introMs=((frames.length-1)*86)+900+280;
   mobileHeroColorTimer=setTimeout(()=>{
     salon.classList.add('color-ready');
     mobileHeroColorTimer=null;
