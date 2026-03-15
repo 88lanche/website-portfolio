@@ -392,7 +392,23 @@
   }
   .profile-card .role{color:var(--accent);font-family:var(--font-mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px;}
   .profile-card .location{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;opacity:.4;}
-  .profile-card .bio{font-size:13px;line-height:1.8;opacity:.6;margin-top:12px;}
+  .profile-card .bio{font-size:13px;line-height:1.8;opacity:.6;margin-top:12px;white-space:pre-line;}
+  .profile-card .bio.typing-active::after{
+    content:'';
+    display:inline-block;
+    width:8px;
+    height:1.05em;
+    margin-left:5px;
+    vertical-align:-0.14em;
+    background:rgba(255,255,255,.96);
+    border-radius:1px;
+    box-shadow:0 0 10px rgba(255,255,255,.28);
+    animation:bioCaret 1s steps(1,end) infinite;
+  }
+  @keyframes bioCaret{
+    0%,49%{opacity:1;}
+    50%,100%{opacity:0;}
+  }
   .profile-card .stat-row{
     display:grid;
     grid-template-columns:160px 1fr;
@@ -588,9 +604,9 @@
   .lb-frame{
     position:relative;
     padding:16px 16px 32px;
-    background:rgba(0,0,0,.6);
-    border:1px solid rgba(255,255,255,.4);
-    box-shadow:0 30px 90px rgba(0,0,0,.55);
+    background:transparent;
+    border:none;
+    box-shadow:none;
     max-width:92vw;
     max-height:92vh;
     display:flex;
@@ -605,14 +621,12 @@
     display:grid;
     place-items:center;
     overflow:hidden;
+    max-width:90vw;
+    max-height:82vh;
   }
   .lb-media-stage{
     display:grid;
     place-items:center;
-  }
-  .lb-media.nav-animating{
-    width:var(--lb-media-w,auto);
-    height:var(--lb-media-h,auto);
   }
   .lb-media.nav-animating .lb-media-stage{
     position:absolute;
@@ -622,7 +636,7 @@
     max-width:90vw;
     max-height:82vh;
     object-fit:contain;
-    border:2px solid rgba(255,255,255,.9);
+    border:none;
     background:#000;
     display:block;
   }
@@ -651,6 +665,22 @@
       background:transparent;
       border:none;
       box-shadow:none;
+    }
+    .lb-media{
+      width:min(92vw,calc(100vw - 24px));
+      height:min(78vh,calc(100vh - 172px));
+      max-width:none;
+      max-height:none;
+    }
+    .lb-media-stage{
+      width:100%;
+      height:100%;
+    }
+    .lb-media img,.lb-media video{
+      width:100%;
+      height:100%;
+      max-width:none;
+      max-height:none;
     }
     #lb-prev,
     #lb-next{display:none;}
@@ -745,6 +775,11 @@
   }
   .proj-masonry button{
     all:unset;display:block;cursor:pointer;width:100%;height:100%;
+  }
+  .proj-masonry .proj-image-static{
+    display:block;
+    width:100%;
+    height:100%;
   }
   .proj-masonry img{
     width:100%;height:100%;display:block;object-fit:cover;transition:transform .5s ease,filter .4s ease;
@@ -1571,6 +1606,7 @@ const TILTS=['tilt-1','tilt-2','tilt-3','tilt-4','tilt-5','tilt-6','tilt-7','til
 const SHAPES=['square','portrait','portrait','landscape','square','square','landscape','portrait'];
 const CAPTIONS=['35mm','shot on film','kodak gold','analog','found','untitled','iso 400','exposed'];
 const PROFILE_UNLOCK_KEY='profileUnlocked';
+const PROFILE_ABOUT_TYPED_KEY='profileAboutTyped';
 const HOLD_C=2*Math.PI*54; // ~339.3
 const HOLD_MS=900;
 let lbImgs=[],lbIdx=0;
@@ -1596,6 +1632,7 @@ function showWelcome(){
 const VIDEO_EXT=/\.(mp4|webm|mov|m4v)(\?.*)?$/i;
 const YT_RX=/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]{11})/i;
 function renderProfilePage(){
+  stopProfileAboutTyping();
   // Photo card
   document.getElementById('pc-photo').innerHTML=`
     <span class="profile-card-label">// Portrait</span>
@@ -1609,8 +1646,11 @@ function renderProfilePage(){
   // About card
   document.getElementById('pc-about').innerHTML=`
     <span class="profile-card-label">// About</span>
-    <div class="bio">${D.aboutP1}</div>
-    <div class="bio">${D.aboutP2}</div>`;
+    <div class="bio"></div>
+    <div class="bio"></div>`;
+  const aboutBios=document.querySelectorAll('#pc-about .bio');
+  if(aboutBios[0])aboutBios[0]._fullText=D.aboutP1||'';
+  if(aboutBios[1])aboutBios[1]._fullText=D.aboutP2||'';
   // Stats card
   const types=D.types||[];
   document.getElementById('pc-stats').innerHTML=`
@@ -1626,6 +1666,8 @@ function renderProfilePage(){
 
 // ── HOLD INTERACTION ──
 let holdAF=null,holdActive=false,holdProgress=0,holdStartTs=0;
+let profileAboutTypingRun=0;
+let profileAboutTypingTimers=[];
 let lbGestureStartX=0,lbGestureStartY=0,lbGestureCurrentX=0,lbGestureCurrentY=0,lbDragging=false,lbWheelAccumX=0,lbWheelAccumY=0,lbWheelTimer=null,lbCloseTimer=null,lbNavTimer=null,lbNavAnimating=false,lbGestureMoved=false,lbSuppressClickUntil=0;
 const LB_NAV_DIST=52;
 const LB_CLOSE_DIST=80;
@@ -1633,6 +1675,85 @@ const LB_WHEEL_NAV_DIST=90;
 const LB_WHEEL_CLOSE_DIST=165;
 const LB_DISMISS_MS=320;
 const LB_NAV_MS=340;
+const PROFILE_TYPE_CHAR_MS=44;
+const PROFILE_TYPE_SPACE_MS=16;
+const PROFILE_TYPE_PUNCT_MS=120;
+const PROFILE_TYPE_BREAK_MS=360;
+function clearProfileAboutTimers(){
+  profileAboutTypingTimers.forEach(id=>clearTimeout(id));
+  profileAboutTypingTimers=[];
+}
+function queueProfileAboutTimer(fn,delay){
+  const id=setTimeout(()=>{
+    profileAboutTypingTimers=profileAboutTypingTimers.filter(t=>t!==id);
+    fn();
+  },delay);
+  profileAboutTypingTimers.push(id);
+}
+function stopProfileAboutTyping(fillFinal){
+  profileAboutTypingRun++;
+  clearProfileAboutTimers();
+  const bios=document.querySelectorAll('#pc-about .bio');
+  bios.forEach(el=>{
+    const full=el._fullText||'';
+    el.classList.remove('typing-active');
+    el.textContent=fillFinal?full:'';
+  });
+}
+function hasProfileAboutTyped(){
+  return sessionStorage.getItem(PROFILE_ABOUT_TYPED_KEY)==='true';
+}
+function getProfileTypeDelay(ch){
+  if(ch==='\n')return PROFILE_TYPE_BREAK_MS;
+  if(ch===' ')return PROFILE_TYPE_SPACE_MS;
+  if(/[.!?]/.test(ch))return PROFILE_TYPE_PUNCT_MS+40;
+  if(/[,;:]/.test(ch))return PROFILE_TYPE_PUNCT_MS;
+  return PROFILE_TYPE_CHAR_MS;
+}
+function typeProfileBio(el,text,runId,done){
+  let idx=0;
+  el.classList.add('typing-active');
+  el.textContent='';
+  function step(){
+    if(runId!==profileAboutTypingRun){
+      el.classList.remove('typing-active');
+      return;
+    }
+    if(idx>=text.length){
+      el.textContent=text;
+      el.classList.remove('typing-active');
+      if(done)done();
+      return;
+    }
+    const ch=text[idx++];
+    el.textContent+=ch;
+    queueProfileAboutTimer(step,getProfileTypeDelay(ch));
+  }
+  queueProfileAboutTimer(step,120);
+}
+function startProfileAboutTyping(){
+  const about=ge('pc-about');
+  if(!about)return;
+  const bios=[...about.querySelectorAll('.bio')];
+  if(!bios.length)return;
+  if(hasProfileAboutTyped()){
+    stopProfileAboutTyping(true);
+    return;
+  }
+  stopProfileAboutTyping(false);
+  sessionStorage.setItem(PROFILE_ABOUT_TYPED_KEY,'true');
+  const runId=profileAboutTypingRun;
+  const texts=bios.map(el=>el._fullText||'');
+  requestAnimationFrame(()=>{
+    typeProfileBio(bios[0],texts[0],runId,()=>{
+      if(runId!==profileAboutTypingRun)return;
+      queueProfileAboutTimer(()=>{
+        if(runId!==profileAboutTypingRun)return;
+        typeProfileBio(bios[1],texts[1],runId);
+      },420);
+    });
+  });
+}
 function revealProfileCards(){
   const wrap=ge('hold-wrap'),cards=ge('profile-cards'),fill=ge('hold-fill'),spacer=document.querySelector('.hold-spacer');
   if(!wrap||!cards||!fill)return;
@@ -1641,6 +1762,7 @@ function revealProfileCards(){
   if(spacer)spacer.classList.add('collapsed');
   fill.style.strokeDashoffset='0';
   sessionStorage.setItem(PROFILE_UNLOCK_KEY,'true');
+  startProfileAboutTyping();
 }
 function resetProfileCards(){
   const wrap=ge('hold-wrap'),cards=ge('profile-cards'),fill=ge('hold-fill'),spacer=document.querySelector('.hold-spacer');
@@ -1650,6 +1772,7 @@ function resetProfileCards(){
   if(spacer)spacer.classList.remove('collapsed');
   fill.style.strokeDashoffset=HOLD_C;
   sessionStorage.removeItem(PROFILE_UNLOCK_KEY);
+  stopProfileAboutTyping(false);
 }
 function initHold(){
   const wrap=document.getElementById('hold-wrap');
@@ -1703,8 +1826,6 @@ function clearLBNavAnimation(){
   lbNavAnimating=false;
   if(!media)return;
   media.classList.remove('nav-animating');
-  media.style.removeProperty('--lb-media-w');
-  media.style.removeProperty('--lb-media-h');
 }
 function buildLBMediaStage(src,label){
   const stage=document.createElement('div');
@@ -1888,17 +2009,12 @@ function lbNav(d){
   resetLBVisual();
   const currentStage=media?media.querySelector('.lb-media-stage'):null;
   const currentKind=media?media.dataset.kind:'';
-  if(!media||!currentStage||currentKind!=='image'||VIDEO_EXT.test(nextSrc)){
+  if(!media||!currentStage||currentKind!=='image'||VIDEO_EXT.test(nextSrc)||!isTouchLike()){
     lbIdx=nextIdx;
     applyLBMedia(lbIdx);
     return;
   }
   const {stage,kind,caption}=buildLBMediaStage(nextSrc,`Gallery item ${nextIdx+1}`);
-  const rect=media.getBoundingClientRect();
-  if(rect.width&&rect.height){
-    media.style.setProperty('--lb-media-w',`${Math.round(rect.width)}px`);
-    media.style.setProperty('--lb-media-h',`${Math.round(rect.height)}px`);
-  }
   media.classList.add('nav-animating');
   media.classList.toggle('closeable',kind==='image');
   media.dataset.kind=kind;
@@ -2224,13 +2340,11 @@ function observeProjectImageColor(){
   imgs.forEach(img=>img.classList.remove('in-view'));
   projImgObs=new IntersectionObserver(entries=>{
     entries.forEach(entry=>{
-      if(!entry.isIntersecting)return;
-      entry.target.classList.add('in-view');
-      projImgObs.unobserve(entry.target);
+      entry.target.classList.toggle('in-view',entry.isIntersecting);
     });
   },{
-    threshold:.16,
-    rootMargin:'0px 0px -8% 0px'
+    threshold:.3,
+    rootMargin:'-30% 0px -30% 0px'
   });
   imgs.forEach(img=>projImgObs.observe(img));
 }
