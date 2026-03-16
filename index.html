@@ -27,20 +27,23 @@
   /* CURSOR */
   .cursor-dot{
     position:fixed;top:0;left:0;z-index:300;pointer-events:none;
-    width:6px;height:6px;border-radius:50%;
+    width:4px;height:4px;border-radius:50%;
     background:var(--white);opacity:.9;
     transform:translate(-50%,-50%) scale(1);
+    mix-blend-mode:difference;
     transition:transform .12s ease,opacity .2s ease;
   }
   .cursor{
     position:fixed;top:0;left:0;z-index:300;pointer-events:none;
-    width:36px;height:36px;display:flex;align-items:center;justify-content:center;
+    width:28px;height:28px;display:flex;align-items:center;justify-content:center;
     transform:translate(-50%,-50%) scale(1);
+    mix-blend-mode:difference;
     transition:transform .15s ease,opacity .2s ease;
     color:var(--white);opacity:.8;
   }
-  .cursor.hover{transform:translate(-50%,-50%) scale(1.15);opacity:1;}
-  .cursor-dot.hover{transform:translate(-50%,-50%) scale(1.4);opacity:1;}
+  .cursor svg{width:100%;height:100%;}
+  .cursor.hover{transform:translate(-50%,-50%) scale(1.1);opacity:1;}
+  .cursor-dot.hover{transform:translate(-50%,-50%) scale(1.3);opacity:1;}
   /* Hide native cursor everywhere; rely on custom crosshair */
   body,
   a,
@@ -143,6 +146,8 @@
   .footer-links ul li:last-child::after{content:'';}
   .footer-links a{color:var(--white);text-decoration:none;font-size:13px;transition:color .2s;}
   .footer-links a:hover{color:var(--accent);}
+  .link-generator{display:inline-block;min-width:0;cursor:pointer;}
+  .link-generator.is-generating{color:var(--accent);}
   .footer-bottom{display:flex;justify-content:space-between;align-items:center;opacity:.3;font-size:10px;letter-spacing:.1em;}
   .back-top{color:var(--white);text-decoration:none;font-size:10px;letter-spacing:.15em;text-transform:uppercase;opacity:.5;transition:opacity .2s,color .2s;}
   .back-top:hover{opacity:1;color:var(--accent);}
@@ -993,11 +998,11 @@
 
   /* Bottom label */
   #loader-status {
+    text-align:center;
     font-size: 10px; letter-spacing: .18em;
     color: rgba(255,255,255,.4);
     text-transform: uppercase;
   }
-
   .ring-wrap {
     position: relative; width: 210px; height: 210px;
   }
@@ -1017,6 +1022,18 @@
     display: flex; align-items: center; justify-content: center;
   }
   #lens-svg { width: 168px; height: 168px; }
+  .loader-rec-light{
+    position:absolute;
+    top:18px; right:-28px;
+    width:9px; height:9px;
+    border-radius:50%;
+    background:rgba(255,48,48,.22);
+    border:1px solid rgba(255,120,120,.28);
+    box-shadow:0 0 0 1px rgba(255,48,48,.08),0 0 10px rgba(255,36,36,.08);
+    opacity:.34;
+    transform:scale(1);
+    transition:opacity .08s ease,transform .08s ease,box-shadow .08s ease,background .08s ease,border-color .08s ease;
+  }
 
   /* ══ PAGE FLASH ══ */
   #page-flash {
@@ -1096,8 +1113,9 @@
         <g id="ticks" opacity=".25"></g>
       </svg>
     </div>
+    <div class="loader-rec-light" id="loader-rec-light" aria-hidden="true"></div>
   </div>
-<div id="loader-status">f/22 — Initializing</div>
+  <div id="loader-status">f/22 — Initializing</div>
 </div>
 <div id="page-flash"></div>
 <div id="welcome-overlay"><span>Welcome</span></div>
@@ -1434,7 +1452,9 @@
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">
 
-</script><script>
+</script>
+<script src="assets/audio/audio-data.js"></script>
+<script>
 // ── DEFAULT DATA ──
 const DD = {"logo":"88lanche°","hero1":"Welcome to","hero2":"my one","hero3":"and only","hero4":"digital portfolio","location":"From Queens, NYC","role":"Creator + Photos","accent":"#ffffff","email":"88lanche@gmail.com","aboutHeading":"Hello this is <em>Blanche Lin</em>","aboutP1":"Hi my name is Blanche.\n\nI’ve been practicing photography for over six years. What started as curiosity slowly became a way for me to pay closer attention to the world around me. Photography allows me to notice moments that might otherwise pass by unnoticed.\n\nI don’t limit myself to one type of photography. If something feels visually interesting or meaningful to me, I want to capture it. My work ranges from street scenes and travel to portraits and everyday moments that catch my eye.\nTravel plays a big role in how I see things. Being in new environments constantly reminds me how different places carry their own energy and stories.\n\nI work with Adobe Lightroom and Final Cut Pro, which I use to refine images and shape visual stories through editing and video.","aboutP2":"For me, photography isn’t just about documenting what something looked like. It’s about preserving what it felt like to be there in that moment.","aboutCta":"Email","aboutImg":"https://i.imgur.com/17dRL8H.jpeg","tagline":"Photographer","contactH1":"Let's","contactH2":"talk.","contactIntro":"Feel free to reach out for any project|collaboration or just to say hello.","contactEmail":"88lanche@gmail.com","contactSocial":"Instagram:https://instagram.com/88lanche\nYoutube:https://youtube.com/@88lanche?si=oTWhUxFejSQ1s9n-\nLinkedIn:https://www.linkedin.com/in/blanchelin/","poem":"Feel free to email if you want to take some shots|I'll email back to you with my thoughts|It'll take me a few hours, a few days to a week|Don't fret, I'm working on this as we speak:)","copyright":"©2026","socialLinks":"Instagram:https://instagram.com/88lanche\nYoutube:https://youtube.com/@88lanche?si=oTWhUxFejSQ1s9n-\nLinkedIn:https://www.linkedin.com/in/blanchelin/","projects":[{"title":"Mars","tag":"Travel","num":"01","img":"https://i.imgur.com/VJYiiwW.jpeg","wide":false,"desc":"My friends and I took a short trip to Death Valley National Park to go stargazing in particular. We flew for a weekend from New York to Los Angeles and ventured east, taking in amazing views from the surrounding basins, mountains, and desert. This collection includes portraits of my friends and I, Mars-like landscapes and some long exposed photos of the gold tier night sky. ","year":"2026","images":["https://i.imgur.com/1bmKPcb.jpeg","https://i.imgur.com/viFm9RH.jpeg","https://i.imgur.com/O1Pfa1b.jpeg","https://i.imgur.com/qWcwB9R.jpeg","https://i.imgur.com/NBJU51t.jpeg","https://i.imgur.com/40qSoHH.jpeg","https://i.imgur.com/Qrrqhkk.jpeg","https://i.imgur.com/QGfVHEz.jpeg","https://i.imgur.com/VJYiiwW.jpeg","https://i.imgur.com/3Eq5TVj.jpeg","https://i.imgur.com/87JzXOp.jpeg","https://i.imgur.com/bKPiP9C.jpeg","https://i.imgur.com/lHU2yHT.jpeg","https://i.imgur.com/29CMppK.jpeg","https://i.imgur.com/D96U88J.jpeg","https://i.imgur.com/WHlVoaB.jpeg","https://i.imgur.com/T2HHQ6z.jpeg","https://i.imgur.com/sx3IPq2.jpeg","https://i.imgur.com/pj4ecrD.jpeg","https://i.imgur.com/f1TwMw0.jpeg","https://i.imgur.com/XfeJE8s.jpeg","https://i.imgur.com/Sg1kOgN.jpeg","https://i.imgur.com/t031LwR.jpeg"],"location":"Los Angeles | Death Valley National Park, CA"},{"title":"Pumen","tag":"Volunteer","num":"02","img":"https://i.imgur.com/w9zdZnc.jpeg","wide":false,"desc":"I participated as a assistant teacher in an English and American exchange program overseas at Pumen Middle School in Kaohsiung, Taiwan. I was introduced to this program by 佛光山, an international Buddhist Organization, specifically the Young Adult Division that I am a part of. During the trip, I had the amazing opportunity to take many different types of photos including landscape, portraits, as well as abstract and experimental shots of my environment.","year":"2023 / 2025","images":["https://i.imgur.com/Nhpv4Bd.jpeg","https://i.imgur.com/gJJe4lH.jpeg","https://i.imgur.com/e8m1HxQ.jpeg","https://i.imgur.com/lEQp4W7.jpeg","https://i.imgur.com/tp25Pq8.jpeg","https://i.imgur.com/kizvb2I.jpeg","https://i.imgur.com/On0XWIb.jpeg","https://i.imgur.com/K7pOyxH.jpeg","https://i.imgur.com/hw2i6VV.jpeg","https://i.imgur.com/af6lkPG.jpeg","https://i.imgur.com/LIzySHI.jpeg","https://i.imgur.com/zw7XRA5.jpeg","https://i.imgur.com/qlEUYBx.jpeg","https://i.imgur.com/e8o3W42.jpeg","https://i.imgur.com/J1jKjdN.jpeg","https://i.imgur.com/Sz0hj2r.jpeg","https://i.imgur.com/bZQz2br.jpeg","https://i.imgur.com/24hO1Tl.jpeg","https://i.imgur.com/w9zdZnc.jpeg","https://i.imgur.com/3z7TdPy.jpeg","https://i.imgur.com/rRHi0Ok.jpeg","https://i.imgur.com/zmPROTg.jpeg","https://i.imgur.com/FvdWQL9.jpeg","https://i.imgur.com/Uy3RT3I.jpeg","https://i.imgur.com/d42tGZu.jpeg","https://i.imgur.com/7GKEZ55.jpeg","https://i.imgur.com/8h3Hvmh.jpeg"],"location":"Kaohsiung | Taipei, TW"},{"title":"Adoring Angels","tag":"Creative Direction","num":"03","img":"https://i.imgur.com/Vo2yrQu.jpeg","wide":false,"desc":"I had the opportunity to creatively shoot for Adoring Angels, an emerging clothing brand based in NYC. The project consisted of capturing multiple new unreleased products at a studio in Williamsburg. I directed, captured, and edited the photos below with the help of the team.","year":"2026","images":["https://i.imgur.com/tptzdnB.jpeg","https://i.imgur.com/bn3gdhN.jpeg","https://i.imgur.com/GAvm6WL.jpeg","https://i.imgur.com/cA4LNFC.jpeg","https://i.imgur.com/v1xJRfR.jpeg","https://i.imgur.com/RHs1DJh.jpeg","https://i.imgur.com/ioPWe0a.jpeg","https://i.imgur.com/x7L7smY.jpeg","https://i.imgur.com/k1evDRi.jpeg","https://i.imgur.com/Fndsdwh.jpeg","https://i.imgur.com/ZtLpHch.jpeg","https://i.imgur.com/vB21397.jpeg","https://i.imgur.com/24hx9he.jpeg","https://i.imgur.com/5z6dpdX.jpeg","https://i.imgur.com/sGA4OEt.jpeg","https://i.imgur.com/xb8OXRi.jpeg","https://i.imgur.com/QjpAed3.jpeg","https://i.imgur.com/6J1Db93.jpeg","https://i.imgur.com/LpmoWAR.jpeg","https://i.imgur.com/HAUU8aV.jpeg","https://i.imgur.com/O8ekdpS.jpeg","https://i.imgur.com/Hi2QKw4.jpeg","https://i.imgur.com/Vo2yrQu.jpeg","https://i.imgur.com/sWjG7g3.jpeg","https://i.imgur.com/ckTSdJT.jpeg","https://i.imgur.com/FvkyBbk.jpeg","https://i.imgur.com/MbryFBR.jpeg","https://i.imgur.com/LYlgsZ6.jpeg","https://i.imgur.com/i5LgzTJ.jpeg","https://i.imgur.com/7M4hIal.jpeg","https://i.imgur.com/m58LVza.jpeg","https://i.imgur.com/KEH7I9J.jpeg","https://i.imgur.com/0mDBDn9.jpeg"],"location":"Brooklyn , NY"},{"title":"Reunion","tag":"Memory","num":"04","img":"https://i.imgur.com/dJk2ClZ.jpeg","wide":false,"desc":"I went with my little sister to see my family on the other side of the world and got to experience what it was like living in China. It was my second time going back to the motherland of my parents. The first time I went, I was only 6 months old so I don’t remember much. I visited many cities with Wenzhou and Changsha to be the most memorable because both were with family. The collection below showcases the beauty of China in landscape and culture.","year":"2025","images":["https://i.imgur.com/dJk2ClZ.jpeg","https://i.imgur.com/V1jd1KN.jpeg","https://i.imgur.com/OJLKRU6.jpeg","https://i.imgur.com/QRIklbz.jpeg","https://i.imgur.com/h7mXlfw.jpeg","https://i.imgur.com/2hmaZcI.jpeg","https://i.imgur.com/RVqIc9f.jpeg","https://i.imgur.com/zMziOXf.jpeg","https://i.imgur.com/zQtc1Tq.jpeg","https://i.imgur.com/jQLkKAO.jpeg","https://i.imgur.com/adkYRy4.jpeg","https://i.imgur.com/Y9dez2b.jpeg","https://i.imgur.com/s0nuGlB.jpeg","https://i.imgur.com/JrMxysi.jpeg","https://i.imgur.com/WnsOAMl.jpeg","https://i.imgur.com/Cl81CAr.jpeg","https://i.imgur.com/3xhc3ol.jpeg","https://i.imgur.com/XoKYblp.jpeg","https://i.imgur.com/lpoE9ya.jpeg"],"location":"Changsha | Wenzhou , CN"},{"title":"Bittersauces","tag":"Photoshoot","num":"05","img":"https://i.imgur.com/xmcAroe.jpeg","wide":false,"desc":"Bittersauces is a small minimalistic clothing brand. I had the chance to take multiple shots of a single product for the first time which was different from Adoring Angels. Most of the photos were taken at a studio in Brooklyn, New York. ","year":"2024","images":["https://i.imgur.com/Taczk6l.jpeg","https://i.imgur.com/8wel8kr.jpeg","https://i.imgur.com/rigUZci.jpeg","https://i.imgur.com/uSJHwhE.jpeg","https://i.imgur.com/wrOVd95.jpeg","https://i.imgur.com/LU3mhXc.jpeg","https://i.imgur.com/0jAe9ci.jpeg","https://i.imgur.com/Gdu5eQA.jpeg","https://i.imgur.com/vIe6wzD.jpeg","https://i.imgur.com/bj4gDDf.jpeg","https://i.imgur.com/MzXTtrF.jpeg","https://i.imgur.com/8kJOMwd.jpeg","https://i.imgur.com/ycq06W8.jpeg","https://i.imgur.com/xmcAroe.jpeg","https://i.imgur.com/IYPTJsW.jpeg","https://i.imgur.com/WyUg4UM.jpeg","https://i.imgur.com/ezMqvbR.jpeg","https://i.imgur.com/sslDYSY.jpeg","https://i.imgur.com/gmon0g0.jpeg","https://i.imgur.com/3pMBVzX.jpeg","https://i.imgur.com/gMDAhYQ.jpeg","https://i.imgur.com/Z58HaBQ.jpeg","https://i.imgur.com/DczhWXt.jpeg","https://i.imgur.com/X5S8zfz.jpeg","https://i.imgur.com/Q5PsUow.jpeg","https://i.imgur.com/BFaR3WS.jpeg","https://i.imgur.com/tH0iq1I.jpeg","https://i.imgur.com/JCAWxE3.jpeg","https://i.imgur.com/uBW3rqa.jpeg","https://i.imgur.com/Q0crcW0.jpeg","https://i.imgur.com/dsGkdrU.jpeg","https://i.imgur.com/wLPDyIm.jpeg","https://i.imgur.com/bXnxvZP.jpeg","https://i.imgur.com/5Cq93KQ.jpeg","https://i.imgur.com/JabEtW7.jpeg","https://i.imgur.com/IjxHVTQ.jpeg"],"location":"Brooklyn , NY"},{"title":"Grad","tag":"Portrait","num":"06","img":"https://i.imgur.com/iB0Oi6u.jpeg","wide":false,"desc":"Throughout college, I've taken the initiative to shoot graduation portraits of my friends, both individually and as a group. The portraits go back to when I first started in 2023 to last year's graduating class of 2025. I am currently open to taking more grad photos this year!","year":"2023-2025","images":["https://i.imgur.com/qGcuBDz.jpeg","https://i.imgur.com/SWGWLTX.jpeg","https://i.imgur.com/glSdt3J.jpeg","https://i.imgur.com/JzIDBVH.jpeg","https://i.imgur.com/6zKgwa6.jpeg","https://i.imgur.com/oBO1cVw.jpeg","https://i.imgur.com/iToHuOk.jpeg","https://i.imgur.com/EQixV4i.jpeg","https://i.imgur.com/s2h9u0b.jpeg","https://i.imgur.com/ZDcIRAL.jpeg","https://i.imgur.com/1wcdc05.jpeg","https://i.imgur.com/2tx2DjE.jpeg","https://i.imgur.com/vjEf39n.jpeg","https://i.imgur.com/lT6IyK7.jpeg","https://i.imgur.com/v44rxwR.jpeg","https://i.imgur.com/zxSSHDm.jpeg","https://i.imgur.com/iEFmeWE.jpeg","https://i.imgur.com/9Norv5I.jpeg","https://i.imgur.com/F42cNsy.jpeg","https://i.imgur.com/HqgTrx4.jpeg","https://i.imgur.com/wkZpp3M.jpeg","https://i.imgur.com/nfg883F.jpeg","https://i.imgur.com/iB0Oi6u.jpeg","https://i.imgur.com/XTukVr5.jpeg","https://i.imgur.com/q91dJhq.jpeg","https://i.imgur.com/JIssH0Z.jpeg","https://i.imgur.com/gcRpdXd.jpeg"],"location":"New York , NY"},{"title":"Awaken Lion","tag":"Special Events","num":"07","img":"https://i.imgur.com/LbpbICa.jpeg","wide":false,"desc":"Awaken Lion is a professional lion dance team based in Queens, New York. I took photos of their street cleaning during Lunar New Year at the New World Mall in Flushing. Street cleaning is when the lions go into the stores and restaurants to ward off evil spirits and bring good luck for the business. ","year":"2026","images":["https://i.imgur.com/EMwidfm.jpeg","https://i.imgur.com/TalXmnN.jpeg","https://i.imgur.com/tOn17xi.jpeg","https://i.imgur.com/n6qMNyM.jpeg","https://i.imgur.com/QaaDiMy.jpeg","https://i.imgur.com/ewcra9k.jpeg","https://i.imgur.com/zNuLILj.jpeg","https://i.imgur.com/hkfCIc8.jpeg","https://i.imgur.com/BjEWJ5w.jpeg","https://i.imgur.com/KSnPIW1.jpeg","https://i.imgur.com/Ee0hEiS.jpeg","https://i.imgur.com/qdAfa42.jpeg","https://i.imgur.com/i8nUDBN.jpeg","https://i.imgur.com/fDNzfoj.jpeg","https://i.imgur.com/fzgEhFN.jpeg","https://i.imgur.com/eSDJnGR.jpeg","https://i.imgur.com/IP6EVvf.jpeg","https://i.imgur.com/fVP4UYE.jpeg","https://i.imgur.com/LbpbICa.jpeg"],"location":"Queens , NY"},{"title":"Coming Soon.","tag":"Coming Soon.","num":"08","img":"","wide":false,"desc":"Coming Soon.","year":"2026","images":[],"location":"Boston , MA"}],"types":[{"name":"Abstract | Portrait","desc":"Am I lucky with these shots or were they preplanned? Still a rookie uncaught with good hands."},{"name":"Architecture | Landscape","desc":"From pagodas to mountains, there are many places to be. Here's some of the most beautiful places to see."},{"name":"Special Events","desc":"They say life is a journey, you only live once. So record the big moments and put them in front."},{"name":"Product","desc":"When you plan on selling your piece, marketing is important, I make it with ease."}],"faqImg":"https://i.imgur.com/DLg380z.jpeg","faq":[{"q":"What services do you offer?","a":"I offer portrait, landscape, product, and event photography. I also do creative direction and retouching on Adobe Lightroom."},{"q":"What is your typical turnaround time?","a":"Depending on the project scope, it can take between a few hours to a week."},{"q":"Do you only take photos?","a":"At the moment, yes I only take and edit photos."}],"gallery":["https://i.imgur.com/QBHgOO9.jpeg","https://i.imgur.com/CKMXSyL.jpeg","https://i.imgur.com/7birMx9.jpeg","https://i.imgur.com/rnDL4Pa.jpeg","https://i.imgur.com/J7GeHHe.jpeg","https://i.imgur.com/AKO9e2X.jpeg","https://i.imgur.com/tbe6R9O.jpeg","https://i.imgur.com/tpFSNg3.jpeg","https://i.imgur.com/KJBF4R1.jpeg","https://i.imgur.com/Ton2ekM.jpeg","https://i.imgur.com/usFzELk.jpeg","https://i.imgur.com/4y1QUZt.jpeg","https://i.imgur.com/Hvevwi7.jpeg","https://i.imgur.com/UcljOhv.jpeg","https://i.imgur.com/nyHgvj4.jpeg","https://i.imgur.com/Kb3nV1F.jpeg","https://i.imgur.com/Sg1kOgN.jpeg","https://i.imgur.com/gcRpdXd.jpeg","https://i.imgur.com/JabEtW7.jpeg","https://i.imgur.com/tp25Pq8.jpeg"],"videos":[]};
 
@@ -1461,8 +1481,22 @@ function triggerFlash(){
 // ── ROUTER ──
 let curPage='home', curProj=0;
 let projImgObs=null;
+let lastRouteShutterAt=0;
+const ROUTE_SHUTTER_WINDOW_MS=220;
+let workPageMarkupCache='';
+let workPageMarkupKey='';
+let workPageWarmKey='';
+function playRouteShutter(){
+  const now=performance.now();
+  if(now-lastRouteShutterAt<ROUTE_SHUTTER_WINDOW_MS)return;
+  lastRouteShutterAt=now;
+  playShutterSound('soft');
+}
 function go(page,projIdx){
+  if(performance.now()-lastRouteShutterAt>ROUTE_SHUTTER_WINDOW_MS)playRouteShutter();
+  if(page==='work')warmWorkPageImages();
   triggerFlash();
+  const routeDelay=page==='work'?70:150;
   setTimeout(()=>{
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
     const t=document.getElementById('page-'+page);
@@ -1475,7 +1509,7 @@ function go(page,projIdx){
     if(page==='work')renderWorkPage();
     if(page==='contact')renderContactPage();
     setTimeout(()=>{observeFadeUps();observeProjectImageColor();addHoverTargets();protectMedia();},50);
-  },150);
+  },routeDelay);
 }
 function updateNavActive(){
   document.querySelectorAll('.nav-links a').forEach(a=>{
@@ -1503,14 +1537,97 @@ function renderRecordSalon(){
       </button>
     </div>`).join('');
 }
+const FOOTER_LINK_GEN_CHARS='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+function triggerFooterQuickLink(link){
+  const label=link.dataset.label||link.textContent.trim();
+  if(!label)return;
+  link.dataset.label=label;
+  if(link._footerGenTimer)clearInterval(link._footerGenTimer);
+  let frame=0;
+  const totalFrames=Math.max(10,label.length*3);
+  link.classList.add('is-generating');
+  link._footerGenTimer=setInterval(()=>{
+    const reveal=Math.min(label.length,Math.floor((frame/totalFrames)*label.length));
+    link.textContent=label.split('').map((ch,i)=>{
+      if(ch===' ')return ' ';
+      if(i<reveal)return ch;
+      return FOOTER_LINK_GEN_CHARS[Math.floor(Math.random()*FOOTER_LINK_GEN_CHARS.length)];
+    }).join('');
+    frame++;
+    if(frame>totalFrames){
+      clearInterval(link._footerGenTimer);
+      link._footerGenTimer=null;
+      link.textContent=label;
+      link.classList.remove('is-generating');
+    }
+  },28);
+}
+function initGeneratorLinks(scope){
+  if(!scope)return;
+  scope.querySelectorAll('.link-generator').forEach(link=>{
+    link.dataset.label=link.dataset.label||link.textContent.trim();
+    if(link.dataset.genReady==='1')return;
+    link.dataset.genReady='1';
+    link.addEventListener('mouseenter',()=>triggerFooterQuickLink(link));
+    link.addEventListener('focus',()=>triggerFooterQuickLink(link));
+    link.addEventListener('blur',()=>{
+      if(link._footerGenTimer){
+        clearInterval(link._footerGenTimer);
+        link._footerGenTimer=null;
+      }
+      link.textContent=link.dataset.label||link.textContent;
+      link.classList.remove('is-generating');
+    });
+  });
+}
 function renderFooter(sfx){
   renderPoem('footer-poem-'+sfx,D.poem);
   document.getElementById('footer-copy-'+sfx).textContent=D.copyright;
   const pages=[['Home','home'],['Profile','profile'],['Work','work'],['Contact','contact']];
-  document.getElementById('footer-nav-'+sfx).innerHTML=pages.map(([l,p])=>`<li><a href="#" onclick="go('${p}');return false;">${l}</a></li>`).join('');
-  document.getElementById('footer-social-'+sfx).innerHTML=parseLinks(D.socialLinks).map(([l,u])=>`<li><a href="${u}" target="_blank">${l}</a></li>`).join('');
+  const nav=document.getElementById('footer-nav-'+sfx);
+  nav.innerHTML=pages.map(([l,p])=>`<li><a href="#" class="link-generator" data-label="${l}" onclick="go('${p}');return false;">${l}</a></li>`).join('');
+  initGeneratorLinks(nav);
+  const socials=document.getElementById('footer-social-'+sfx);
+  socials.innerHTML=parseLinks(D.socialLinks).map(([l,u])=>`<li><a href="${u}" target="_blank" class="link-generator" data-label="${l}">${l}</a></li>`).join('');
+  initGeneratorLinks(socials);
 }
 function parseLinks(s){return(s||'').split('\n').map(l=>{const[a,...b]=l.split(':');return[a.trim(),b.join(':').trim()];}).filter(([a])=>a);}
+function getWorkPageMarkupKey(){
+  return JSON.stringify((D.projects||[]).map((p,i)=>[
+    p.title||'',
+    p.tag||'',
+    p.img||'',
+    p.num||String(i+1).padStart(2,'0'),
+    !!p.wide,
+    getProjectCardPosition(p,i)
+  ]));
+}
+function buildWorkPageMarkup(){
+  return D.projects.map((p,i)=>`
+    <div class="work-full-card ${p.wide?'wide':''} fade-up" onclick="go('project',${i})">
+      <div class="work-full-media">
+        ${p.img
+          ? `<img src="${p.img}" alt="${p.title}" loading="lazy" style="object-position:${getProjectCardPosition(p,i)};">`
+          : `<div class="work-full-placeholder">${p.title||'Coming Soon.'}</div>`}
+      </div>
+      <div class="work-full-ov">
+        <div class="work-full-num">${p.num ? `(${p.num})` : `(${String(i+1).padStart(2,'0')})`}</div>
+        <div class="work-full-title">${p.title}</div>
+        <div class="work-full-tag">${p.tag}</div>
+      </div>
+    </div>`).join('');
+}
+function warmWorkPageImages(){
+  const key=getWorkPageMarkupKey();
+  if(workPageWarmKey===key)return;
+  workPageWarmKey=key;
+  (D.projects||[]).forEach(p=>{
+    if(!p.img)return;
+    const img=new Image();
+    img.decoding='async';
+    img.src=p.img;
+  });
+}
 const PROJECT_CARD_POSITIONS={
   '01':'50% 68%',
   '02':'50% 62%',
@@ -1520,13 +1637,449 @@ const PROJECT_CARD_POSITIONS={
 };
 let mobileHeroIntroPending=true;
 let mobileHeroColorTimer=null;
+let mobileHeroSoundTimers=[];
+let siteAudioCtx=null;
+let siteNoiseBuffer=null;
+let siteAudioUnlocked=false;
+let siteAudioUnlockHandler=null;
+let lastProfileTypeSoundAt=0;
+let loaderBeepBuffer=null;
+let loaderBeepDecodePromise=null;
+let shutterSampleBuffer=null;
+let shutterSampleDecodePromise=null;
+const LOADER_BEEP_CLIP_SEC=.18;
+const SHUTTER_SAMPLE_OFFSET_SEC=0;
+const SHUTTER_SAMPLE_FULL_SEC=.34;
+const SHUTTER_SAMPLE_SOFT_SEC=.24;
 function isTouchLike(){
   return document.body.classList.contains('touch-device')||(window.matchMedia&&window.matchMedia('(hover: none)').matches);
+}
+function clearMobileHeroSoundTimers(){
+  mobileHeroSoundTimers.forEach(id=>clearTimeout(id));
+  mobileHeroSoundTimers=[];
+}
+function queueMobileHeroSound(fn,delay){
+  const id=setTimeout(()=>{
+    mobileHeroSoundTimers=mobileHeroSoundTimers.filter(t=>t!==id);
+    fn();
+  },delay);
+  mobileHeroSoundTimers.push(id);
+}
+function getSiteAudioCtx(){
+  const AudioCtor=window.AudioContext||window.webkitAudioContext;
+  if(!AudioCtor)return null;
+  if(!siteAudioCtx)siteAudioCtx=new AudioCtor();
+  return siteAudioCtx;
+}
+function getSiteNoiseBuffer(){
+  const ctx=getSiteAudioCtx();
+  if(!ctx)return null;
+  if(siteNoiseBuffer&&siteNoiseBuffer.sampleRate===ctx.sampleRate)return siteNoiseBuffer;
+  const length=Math.max(1,Math.floor(ctx.sampleRate*.28));
+  const buffer=ctx.createBuffer(1,length,ctx.sampleRate);
+  const data=buffer.getChannelData(0);
+  for(let i=0;i<length;i++)data[i]=(Math.random()*2)-1;
+  siteNoiseBuffer=buffer;
+  return siteNoiseBuffer;
+}
+function base64ToArrayBuffer(base64){
+  const binary=atob(base64);
+  const bytes=new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+  return bytes.buffer;
+}
+function decodeEmbeddedAudio(key){
+  const ctx=getSiteAudioCtx();
+  const data=window.__SITE_AUDIO_DATA__&&window.__SITE_AUDIO_DATA__[key];
+  if(!ctx||!data)return Promise.resolve(null);
+  const bytes=base64ToArrayBuffer(data);
+  return ctx.decodeAudioData(bytes.slice(0)).then(buffer=>buffer).catch(()=>null);
+}
+function primeEmbeddedAudioBuffers(){
+  if(!loaderBeepDecodePromise){
+    loaderBeepDecodePromise=decodeEmbeddedAudio('loaderBeepBase64').then(buffer=>{
+      loaderBeepBuffer=buffer;
+      return buffer;
+    });
+  }
+  if(!shutterSampleDecodePromise){
+    shutterSampleDecodePromise=decodeEmbeddedAudio('shutterSampleBase64').then(buffer=>{
+      shutterSampleBuffer=buffer;
+      return buffer;
+    });
+  }
+}
+function playBufferedAudio(buffer,{when=0,offset=0,duration=null,volume=1,pan=0,playbackRate=1}={}){
+  if(!siteAudioUnlocked||!buffer)return false;
+  const ctx=getSiteAudioCtx();
+  if(!ctx)return false;
+  const src=ctx.createBufferSource();
+  const gain=ctx.createGain();
+  const panner=typeof ctx.createStereoPanner==='function'?ctx.createStereoPanner():null;
+  const start=ctx.currentTime+when;
+  const safeOffset=Math.max(0,Math.min(offset,Math.max(0,buffer.duration-.01)));
+  const maxDuration=Math.max(.01,buffer.duration-safeOffset);
+  src.buffer=buffer;
+  src.playbackRate.setValueAtTime(playbackRate,start);
+  gain.gain.setValueAtTime(Math.max(0,volume),start);
+  src.connect(gain);
+  if(panner){
+    panner.pan.setValueAtTime(Math.max(-1,Math.min(1,pan)),start);
+    gain.connect(panner);
+    panner.connect(ctx.destination);
+  }else{
+    gain.connect(ctx.destination);
+  }
+  if(duration!==null)src.start(start,safeOffset,Math.min(duration,maxDuration));
+  else src.start(start,safeOffset);
+  return true;
+}
+function removeSiteAudioUnlockListeners(){
+  if(!siteAudioUnlockHandler)return;
+  document.removeEventListener('pointerdown',siteAudioUnlockHandler,true);
+  document.removeEventListener('touchstart',siteAudioUnlockHandler,true);
+  document.removeEventListener('keydown',siteAudioUnlockHandler,true);
+  siteAudioUnlockHandler=null;
+}
+function unlockSiteAudio(){
+  const ctx=getSiteAudioCtx();
+  if(!ctx)return;
+  const finalize=()=>{
+    siteAudioUnlocked=true;
+    removeSiteAudioUnlockListeners();
+  };
+  Promise.resolve(ctx.state!=='running'?ctx.resume():null).then(()=>{
+    const src=ctx.createBufferSource();
+    src.buffer=ctx.createBuffer(1,1,22050);
+    src.connect(ctx.destination);
+    src.start(0);
+    finalize();
+  }).catch(()=>{});
+}
+function initSiteAudioUnlock(){
+  if(siteAudioUnlocked||siteAudioUnlockHandler)return;
+  siteAudioUnlockHandler=()=>unlockSiteAudio();
+  document.addEventListener('pointerdown',siteAudioUnlockHandler,true);
+  document.addEventListener('touchstart',siteAudioUnlockHandler,true);
+  document.addEventListener('keydown',siteAudioUnlockHandler,true);
+  primeEmbeddedAudioBuffers();
+  unlockSiteAudio();
+}
+function playSiteTone({freq=440,when=0,duration=.06,volume=.015,type='triangle',attack=.005,release=.08,detune=0,pan=0}={}){
+  if(!siteAudioUnlocked)return;
+  const ctx=getSiteAudioCtx();
+  if(!ctx)return;
+  const osc=ctx.createOscillator();
+  const gain=ctx.createGain();
+  const panner=typeof ctx.createStereoPanner==='function'?ctx.createStereoPanner():null;
+  const start=ctx.currentTime+when;
+  osc.type=type;
+  osc.frequency.setValueAtTime(freq,start);
+  osc.detune.setValueAtTime(detune,start);
+  gain.gain.setValueAtTime(0.0001,start);
+  gain.gain.exponentialRampToValueAtTime(Math.max(volume,0.0001),start+attack);
+  gain.gain.exponentialRampToValueAtTime(0.0001,start+duration+release);
+  osc.connect(gain);
+  if(panner){
+    panner.pan.setValueAtTime(Math.max(-1,Math.min(1,pan)),start);
+    gain.connect(panner);
+    panner.connect(ctx.destination);
+  }else{
+    gain.connect(ctx.destination);
+  }
+  osc.start(start);
+  osc.stop(start+duration+release+.02);
+}
+function playSiteSweep({from=440,to=880,when=0,duration=.08,volume=.01,type='sine',attack=.004,release=.08,q=0,pan=0}={}){
+  if(!siteAudioUnlocked)return;
+  const ctx=getSiteAudioCtx();
+  if(!ctx)return;
+  const osc=ctx.createOscillator();
+  const filter=ctx.createBiquadFilter();
+  const gain=ctx.createGain();
+  const panner=typeof ctx.createStereoPanner==='function'?ctx.createStereoPanner():null;
+  const start=ctx.currentTime+when;
+  osc.type=type;
+  osc.frequency.setValueAtTime(Math.max(from,1),start);
+  osc.frequency.exponentialRampToValueAtTime(Math.max(to,1),start+duration);
+  filter.type='lowpass';
+  filter.frequency.setValueAtTime(7200,start);
+  filter.Q.setValueAtTime(q,start);
+  gain.gain.setValueAtTime(0.0001,start);
+  gain.gain.exponentialRampToValueAtTime(Math.max(volume,0.0001),start+attack);
+  gain.gain.exponentialRampToValueAtTime(0.0001,start+duration+release);
+  osc.connect(filter);
+  filter.connect(gain);
+  if(panner){
+    panner.pan.setValueAtTime(Math.max(-1,Math.min(1,pan)),start);
+    gain.connect(panner);
+    panner.connect(ctx.destination);
+  }else{
+    gain.connect(ctx.destination);
+  }
+  osc.start(start);
+  osc.stop(start+duration+release+.02);
+}
+function playSiteNoiseBurst({when=0,duration=.05,volume=.008,attack=.002,release=.05,highpass=900,lowpass=3600,pan=0}={}){
+  if(!siteAudioUnlocked)return;
+  const ctx=getSiteAudioCtx();
+  const buffer=getSiteNoiseBuffer();
+  if(!ctx||!buffer)return;
+  const src=ctx.createBufferSource();
+  const hp=ctx.createBiquadFilter();
+  const lp=ctx.createBiquadFilter();
+  const gain=ctx.createGain();
+  const panner=typeof ctx.createStereoPanner==='function'?ctx.createStereoPanner():null;
+  const start=ctx.currentTime+when;
+  hp.type='highpass';
+  hp.frequency.setValueAtTime(highpass,start);
+  lp.type='lowpass';
+  lp.frequency.setValueAtTime(lowpass,start);
+  gain.gain.setValueAtTime(0.0001,start);
+  gain.gain.exponentialRampToValueAtTime(Math.max(volume,0.0001),start+attack);
+  gain.gain.exponentialRampToValueAtTime(0.0001,start+duration+release);
+  src.buffer=buffer;
+  src.connect(hp);
+  hp.connect(lp);
+  lp.connect(gain);
+  if(panner){
+    panner.pan.setValueAtTime(Math.max(-1,Math.min(1,pan)),start);
+    gain.connect(panner);
+    panner.connect(ctx.destination);
+  }else{
+    gain.connect(ctx.destination);
+  }
+  src.start(start);
+  src.stop(start+duration+release+.03);
+}
+function playLoaderWarningBeep({when=0,volume=.012,pan=0,duration=.05}={}){
+  if(playBufferedAudio(loaderBeepBuffer,{
+    when,
+    offset:0,
+    duration:Math.max(.03,LOADER_BEEP_CLIP_SEC*(duration/.05)),
+    volume:Math.max(.12,Math.min(1,volume*34)),
+    pan
+  }))return;
+  playSiteTone({freq:1318.51,when,duration:duration*.5,volume:volume*.95,type:'square',attack:.001,release:.02,pan});
+  playSiteTone({freq:987.77,when:when+.006,duration:duration*.34,volume:volume*.62,type:'square',attack:.001,release:.02,pan:pan*.45});
+  playSiteTone({freq:659.25,when:when+.01,duration:duration*.22,volume:volume*.18,type:'square',attack:.001,release:.016,pan:pan*.2});
+}
+function playLoaderRiser(duration=6.17){
+  if(!siteAudioUnlocked)return;
+  const ctx=getSiteAudioCtx();
+  const buffer=getSiteNoiseBuffer();
+  if(!ctx||!buffer)return;
+  const start=ctx.currentTime+.01;
+  const end=start+duration;
+  const countdownBeeps=[
+    {when:.22,volume:.0162},
+    {when:1.22,volume:.0162},
+    {when:2.22,volume:.0162},
+    {when:3.22,volume:.0162}
+  ];
+  const rapidBeeps=[
+    {when:4.16,volume:.0172,duration:.036},
+    {when:4.48,volume:.0178,duration:.034},
+    {when:4.76,volume:.0184,duration:.032},
+    {when:5.00,volume:.019,duration:.03},
+    {when:5.20,volume:.0197,duration:.028},
+    {when:5.37,volume:.0204,duration:.026},
+    {when:5.52,volume:.0211,duration:.025},
+    {when:5.65,volume:.0218,duration:.024},
+    {when:5.76,volume:.0224,duration:.023},
+    {when:5.86,volume:.023,duration:.022},
+    {when:5.95,volume:.0236,duration:.021},
+    {when:6.03,volume:.0242,duration:.02},
+    {when:6.10,volume:.0248,duration:.019},
+    {when:6.16,volume:.0254,duration:.018}
+  ];
+
+  countdownBeeps.forEach(({when,volume})=>playLoaderWarningBeep({when,volume,pan:0,duration:.048}));
+  rapidBeeps.forEach(({when,volume,duration})=>playLoaderWarningBeep({when,volume,pan:0,duration}));
+
+  const oscA=ctx.createOscillator();
+  const oscB=ctx.createOscillator();
+  const filter=ctx.createBiquadFilter();
+  const toneGain=ctx.createGain();
+
+  oscA.type='sawtooth';
+  oscB.type='triangle';
+  oscA.frequency.setValueAtTime(84,start);
+  oscA.frequency.exponentialRampToValueAtTime(142,end);
+  oscB.frequency.setValueAtTime(126,start);
+  oscB.frequency.exponentialRampToValueAtTime(214,end);
+  oscB.detune.setValueAtTime(4,start);
+
+  filter.type='lowpass';
+  filter.frequency.setValueAtTime(260,start);
+  filter.frequency.exponentialRampToValueAtTime(1320,end);
+  filter.Q.setValueAtTime(1.45,start);
+
+  toneGain.gain.setValueAtTime(0.0001,start);
+  toneGain.gain.exponentialRampToValueAtTime(.0018,start+.16);
+  toneGain.gain.exponentialRampToValueAtTime(.0058,end-.12);
+  toneGain.gain.exponentialRampToValueAtTime(0.0001,end+.05);
+
+  oscA.connect(filter);
+  oscB.connect(filter);
+  filter.connect(toneGain);
+  toneGain.connect(ctx.destination);
+  oscA.start(start);
+  oscB.start(start);
+  oscA.stop(end+.07);
+  oscB.stop(end+.07);
+
+  const src=ctx.createBufferSource();
+  const band=ctx.createBiquadFilter();
+  const noiseGain=ctx.createGain();
+  src.buffer=buffer;
+  src.loop=true;
+  band.type='bandpass';
+  band.frequency.setValueAtTime(220,start);
+  band.frequency.exponentialRampToValueAtTime(880,end);
+  band.Q.setValueAtTime(1.8,start);
+  noiseGain.gain.setValueAtTime(0.0001,start);
+  noiseGain.gain.exponentialRampToValueAtTime(.0009,start+.2);
+  noiseGain.gain.exponentialRampToValueAtTime(.0028,end-.08);
+  noiseGain.gain.exponentialRampToValueAtTime(0.0001,end+.05);
+  src.connect(band);
+  band.connect(noiseGain);
+  noiseGain.connect(ctx.destination);
+  src.start(start);
+  src.stop(end+.08);
+  playSiteNoiseBurst({when:duration-.03,duration:.016,volume:.0036,attack:.001,release:.014,highpass:1400,lowpass:3400,pan:.04});
+}
+function playLoaderReadySound(){
+  // Keep the handoff quiet so the final rapid countdown can run straight into the shutter.
+}
+function playShutterSample(mode='soft'){
+  const isSoft=mode!=='full';
+  return playBufferedAudio(shutterSampleBuffer,{
+    when:0,
+    offset:SHUTTER_SAMPLE_OFFSET_SEC,
+    duration:isSoft?SHUTTER_SAMPLE_SOFT_SEC:SHUTTER_SAMPLE_FULL_SEC,
+    volume:isSoft ? .82 : 1
+  });
+}
+function playShutterSound(mode='soft'){
+  if(playShutterSample(mode))return;
+  const soft=mode!=='full';
+  const click=soft ? .03 : .082;
+  const body=soft ? .011 : .03;
+  const metal=soft ? .0032 : .0086;
+  playSiteNoiseBurst({
+    when:0,
+    duration:soft ? .02 : .028,
+    volume:click,
+    attack:.0015,
+    release:.024,
+    highpass:soft?560:340,
+    lowpass:soft?2200:1850,
+    pan:-.04
+  });
+  playSiteTone({
+    freq:soft?116:88,
+    when:.002,
+    duration:soft ? .036 : .054,
+    volume:body,
+    type:'triangle',
+    attack:.001,
+    release:.082,
+    pan:-.02
+  });
+  playSiteNoiseBurst({
+    when:soft ? .027 : .034,
+    duration:soft ? .02 : .032,
+    volume:click*(soft ? .98 : 1.08),
+    attack:.001,
+    release:.03,
+    highpass:soft?700:460,
+    lowpass:soft?2500:2100,
+    pan:.05
+  });
+  playSiteTone({
+    freq:soft?102:76,
+    when:soft ? .03 : .038,
+    duration:soft ? .032 : .048,
+    volume:body*.72,
+    type:'triangle',
+    attack:.001,
+    release:.068,
+    pan:.03
+  });
+  playSiteTone({
+    freq:soft?1410:1220,
+    when:soft ? .03 : .037,
+    duration:soft ? .008 : .011,
+    volume:metal,
+    type:'square',
+    attack:.001,
+    release:.018,
+    pan:.09
+  });
+  playSiteNoiseBurst({
+    when:soft ? .052 : .066,
+    duration:soft ? .03 : .042,
+    volume:click*(soft ? .32 : .4),
+    attack:.001,
+    release:.056,
+    highpass:soft?220:140,
+    lowpass:soft?1120:880,
+    pan:.01
+  });
+  playSiteTone({
+    freq:soft?68:50,
+    when:soft ? .056 : .07,
+    duration:soft ? .05 : .074,
+    volume:body*(soft ? .48 : .62),
+    type:'triangle',
+    attack:.001,
+    release:.1,
+    pan:-.01
+  });
+  if(!soft)playSiteNoiseBurst({when:.012,duration:.01,volume:.008,attack:.001,release:.016,highpass:900,lowpass:2200,pan:.14});
+}
+function playMobileIntroSound(){
+  playSiteTone({freq:349.23,when:0,duration:.08,volume:.0108,type:'sine',release:.12,pan:-.14});
+  playSiteSweep({from:392,to:622.25,when:.03,duration:.11,volume:.0096,type:'triangle',attack:.002,release:.14,pan:0});
+  playSiteTone({freq:783.99,when:.1,duration:.08,volume:.0099,type:'sine',release:.16,pan:.15});
+}
+function playHeroTileSound(){
+  playSiteTone({
+    freq:930+Math.random()*120,
+    duration:.016,
+    volume:.0063,
+    type:'sine',
+    release:.03,
+    detune:(Math.random()*24)-12,
+    pan:(Math.random()*.34)-.17
+  });
+}
+function playHeroColorSound(){
+  playSiteTone({freq:523.25,when:0,duration:.07,volume:.012,type:'sine',release:.14,pan:-.12});
+  playSiteTone({freq:659.25,when:.04,duration:.09,volume:.0123,type:'sine',release:.16,pan:.08});
+  playSiteSweep({from:698.46,to:1046.5,when:.06,duration:.12,volume:.0106,type:'triangle',attack:.002,release:.18,pan:.16});
+  playSiteTone({freq:1567.98,when:.09,duration:.018,volume:.0027,type:'sine',attack:.001,release:.03,pan:-.18});
+}
+function playProfileTypeSound(ch){
+  if(!siteAudioUnlocked||!ch||ch===' '||ch==='\n')return;
+  const now=performance.now();
+  const minGap=/[.!?]/.test(ch)?150:88;
+  if(now-lastProfileTypeSoundAt<minGap)return;
+  lastProfileTypeSoundAt=now;
+  playSiteTone({
+    freq:1350+(ch.charCodeAt(0)%5)*38,
+    duration:.018,
+    volume:.0038,
+    type:'square',
+    release:.03
+  });
 }
 function primeMobileHeroIntro(){
   const salon=ge('record-salon');
   if(!salon)return;
   const frames=[...salon.querySelectorAll('.record-frame')];
+  clearMobileHeroSoundTimers();
   if(mobileHeroColorTimer){
     clearTimeout(mobileHeroColorTimer);
     mobileHeroColorTimer=null;
@@ -1561,11 +2114,14 @@ function runMobileHeroIntro(){
   }
   mobileHeroIntroPending=false;
   salon.classList.add('mobile-intro');
+  playMobileIntroSound();
   frames
     .map(frame=>({frame,order:Math.random()}))
     .sort((a,b)=>a.order-b.order)
     .forEach(({frame},i)=>{
-      frame.style.setProperty('--tile-delay',`${i*86}ms`);
+      const delay=i*86;
+      frame.style.setProperty('--tile-delay',`${delay}ms`);
+      queueMobileHeroSound(()=>playHeroTileSound(),delay+100);
     });
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
     frames.forEach(frame=>frame.classList.add('tile-in'));
@@ -1573,6 +2129,7 @@ function runMobileHeroIntro(){
   const introMs=((frames.length-1)*86)+900+280;
   mobileHeroColorTimer=setTimeout(()=>{
     salon.classList.add('color-ready');
+    playHeroColorSound();
     mobileHeroColorTimer=null;
   },introMs);
 }
@@ -2131,19 +2688,12 @@ document.addEventListener('keydown',e=>{
 
 // ── WORK PAGE ──
 function renderWorkPage(){
-  document.getElementById('work-full-grid').innerHTML=D.projects.map((p,i)=>`
-    <div class="work-full-card ${p.wide?'wide':''} fade-up" onclick="go('project',${i})">
-      <div class="work-full-media">
-        ${p.img
-          ? `<img src="${p.img}" alt="${p.title}" loading="lazy" style="object-position:${getProjectCardPosition(p,i)};">`
-          : `<div class="work-full-placeholder">${p.title||'Coming Soon.'}</div>`}
-      </div>
-      <div class="work-full-ov">
-        <div class="work-full-num">${p.num ? `(${p.num})` : `(${String(i+1).padStart(2,'0')})`}</div>
-        <div class="work-full-title">${p.title}</div>
-        <div class="work-full-tag">${p.tag}</div>
-      </div>
-    </div>`).join('');
+  const key=getWorkPageMarkupKey();
+  if(workPageMarkupKey!==key){
+    workPageMarkupKey=key;
+    workPageMarkupCache=buildWorkPageMarkup();
+  }
+  document.getElementById('work-full-grid').innerHTML=workPageMarkupCache;
   renderFooter('work');
 }
 
@@ -2179,7 +2729,9 @@ function renderContactPage(){
   document.getElementById('c-email-link').href=`mailto:${email}`;
   const lines=(D.contactIntro||'').split('|');
   document.getElementById('c-poem').innerHTML=lines.map((l,i)=>`<p>${i===lines.length-1?`<strong>${l}</strong>`:l}</p>`).join('');
-  document.getElementById('c-social-list').innerHTML=parseLinks(D.contactSocial||D.socialLinks).map(([l,u])=>`<li><a href="${u}" target="_blank">${l}</a></li>`).join('');
+  const socialList=document.getElementById('c-social-list');
+  socialList.innerHTML=parseLinks(D.contactSocial||D.socialLinks).map(([l,u])=>`<li><a href="${u}" target="_blank" class="link-generator" data-label="${l}">${l}</a></li>`).join('');
+  initGeneratorLinks(socialList);
   renderFooter('contact');
 }
 function submitForm(){
@@ -2393,10 +2945,17 @@ document.addEventListener('selectstart',e=>{
   const media=e.target.closest('img.protected-media,video.protected-media,[data-protected-host="true"]');
   if(media)e.preventDefault();
 },true);
+document.addEventListener('pointerdown',e=>{
+  if(e.button!==0)return;
+  const routeTarget=e.target.closest('[onclick*="go("],.work-card,.work-full-card,.proj-back');
+  if(!routeTarget||routeTarget.closest('#cms-panel,#cms-login'))return;
+  playRouteShutter();
+},true);
 
 function startSite(){
   if(startSite._done)return;
   renderHome();
+  warmWorkPageImages();
   curPage='home';
   updateNavActive();
   setTimeout(()=>{observeFadeUps();observeProjectImageColor();addHoverTargets();protectMedia();},50);
@@ -2405,6 +2964,7 @@ function startSite(){
 
 // ── INIT ──
 updateNavActive();
+initSiteAudioUnlock();
 
 
 
@@ -2416,11 +2976,96 @@ updateNavActive();
   const statusEl = document.getElementById('loader-status');
   const loader = document.getElementById('loader');
   const lcTl = document.getElementById('lc-tl');
+  const recLight = document.getElementById('loader-rec-light');
   const msgs = [
     'f/22 — Initializing','f/16 — Loading assets','f/11 — Building layout',
     'f/8 — Rendering','f/5.6 — Almost ready','f/4.0 — Focus locked',
     'f/2.8 — Sharpening','f/1.4 — Ready to shoot'
   ];
+  const statusTimeline = [
+    {when:.22,text:msgs[1]},
+    {when:1.22,text:msgs[2]},
+    {when:2.22,text:msgs[3]},
+    {when:3.22,text:msgs[4]},
+    {when:4.16,text:msgs[5]},
+    {when:5.20,text:msgs[6]},
+    {when:6.02,text:msgs[7]}
+  ];
+  const recLightTimeline = [
+    {when:.22,duration:150,intensity:.92},
+    {when:1.22,duration:150,intensity:.92},
+    {when:2.22,duration:150,intensity:.92},
+    {when:3.22,duration:150,intensity:.92},
+    {when:4.16,duration:130,intensity:.95},
+    {when:4.48,duration:125,intensity:.95},
+    {when:4.76,duration:118,intensity:.97},
+    {when:5.00,duration:112,intensity:.98},
+    {when:5.20,duration:108,intensity:1},
+    {when:5.37,duration:104,intensity:1},
+    {when:5.52,duration:98,intensity:1},
+    {when:5.65,duration:94,intensity:1},
+    {when:5.76,duration:90,intensity:1},
+    {when:5.86,duration:86,intensity:1},
+    {when:5.95,duration:82,intensity:1},
+    {when:6.03,duration:78,intensity:1},
+    {when:6.10,duration:74,intensity:1},
+    {when:6.16,duration:72,intensity:1}
+  ];
+  const loaderStatusTimers = [];
+  const loaderLightTimers = [];
+  let loaderLightOffTimer = null;
+  function clearLoaderStatusTimeline(){
+    loaderStatusTimers.forEach(id=>clearTimeout(id));
+    loaderStatusTimers.length = 0;
+  }
+  function resetLoaderRecordingLight(){
+    if(!recLight)return;
+    recLight.style.opacity='.34';
+    recLight.style.transform='scale(1)';
+    recLight.style.background='rgba(255,48,48,.22)';
+    recLight.style.borderColor='rgba(255,120,120,.28)';
+    recLight.style.boxShadow='0 0 0 1px rgba(255,48,48,.08),0 0 10px rgba(255,36,36,.08)';
+  }
+  function flashLoaderRecordingLight(duration=130,intensity=1){
+    if(!recLight)return;
+    const glow=.28+(.72*intensity);
+    recLight.style.opacity=String(.62+(.38*intensity));
+    recLight.style.transform=`scale(${1.06+(.18*intensity)})`;
+    recLight.style.background=`rgba(255,46,46,${.42+(.42*intensity)})`;
+    recLight.style.borderColor=`rgba(255,160,160,${.36+(.34*intensity)})`;
+    recLight.style.boxShadow=`0 0 0 1px rgba(255,48,48,${.12+(.2*intensity)}),0 0 ${Math.round(14+(18*intensity))}px rgba(255,34,34,${glow}),0 0 ${Math.round(28+(28*intensity))}px rgba(255,22,22,${.18+(.18*intensity)})`;
+    if(loaderLightOffTimer)clearTimeout(loaderLightOffTimer);
+    loaderLightOffTimer=setTimeout(()=>{
+      loaderLightOffTimer=null;
+      resetLoaderRecordingLight();
+    },duration);
+  }
+  function clearLoaderRecordingLightTimeline(){
+    loaderLightTimers.forEach(id=>clearTimeout(id));
+    loaderLightTimers.length = 0;
+    if(loaderLightOffTimer){
+      clearTimeout(loaderLightOffTimer);
+      loaderLightOffTimer = null;
+    }
+    resetLoaderRecordingLight();
+  }
+  function scheduleLoaderRecordingLightTimeline(){
+    clearLoaderRecordingLightTimeline();
+    recLightTimeline.forEach(({when,duration,intensity})=>{
+      loaderLightTimers.push(setTimeout(()=>{
+        flashLoaderRecordingLight(duration,intensity);
+      },Math.round(when*1000)));
+    });
+  }
+  function scheduleLoaderStatusTimeline(){
+    clearLoaderStatusTimeline();
+    statusEl.textContent = msgs[0];
+    statusTimeline.forEach(({when,text})=>{
+      loaderStatusTimers.push(setTimeout(()=>{
+        statusEl.textContent = text;
+      },Math.round(when*1000)));
+    });
+  }
 
   let stored = null;
   try{
@@ -2450,27 +3095,35 @@ updateNavActive();
   }
 
   let t0 = null;
-const DURATION = 2200;
+  let loaderRiserStarted = false;
+  const DURATION = 6200;
   function frame(ts) {
     if (!t0) t0 = ts;
     const p = Math.min((ts - t0) / DURATION, 1);
     const e = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
     arc.style.strokeDashoffset = C * (1 - e);
-    statusEl.textContent = msgs[Math.floor(e * (msgs.length - 1))];
+    if(!loaderRiserStarted){
+      loaderRiserStarted = true;
+      scheduleLoaderStatusTimeline();
+      scheduleLoaderRecordingLightTimeline();
+      playLoaderRiser();
+    }
     if (p < 1) {
       requestAnimationFrame(frame);
     } else {
+      clearLoaderStatusTimeline();
       statusEl.textContent = 'f/1.4 — Ready';
+      playLoaderReadySound();
       // Flash then fade out loader
+      playShutterSound('full');
+      triggerFlash();
       setTimeout(() => {
-        triggerFlash();
-        setTimeout(() => {
-          loader.style.display = 'none';
-          startSite._done=false;
-          startSite();
-          showWelcome();
-        }, 150);
-      }, 400);
+        clearLoaderRecordingLightTimeline();
+        loader.style.display = 'none';
+        startSite._done=false;
+        startSite();
+        showWelcome();
+      }, 150);
     }
   }
   setTimeout(() => requestAnimationFrame(frame), 300);
