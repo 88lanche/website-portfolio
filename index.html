@@ -42,8 +42,8 @@
     color:var(--white);opacity:.8;
   }
   .cursor svg{width:100%;height:100%;}
-  .cursor.hover{transform:translate(-50%,-50%) scale(1.1);opacity:1;}
-  .cursor-dot.hover{transform:translate(-50%,-50%) scale(1.3);opacity:1;}
+  .cursor.hover{transform:translate(-50%,-50%) scale(.68);opacity:1;}
+  .cursor-dot.hover{transform:translate(-50%,-50%) scale(.58);opacity:1;}
   /* Hide native cursor everywhere; rely on custom crosshair */
   body,
   a,
@@ -1402,6 +1402,16 @@
     <span style="font-size:10px;opacity:.3;letter-spacing:.1em;" id="proj-counter"></span>
     <button class="proj-nav-btn" id="proj-next-btn" onclick="navProject(1)">Next →</button>
   </div>
+  <footer>
+    <div class="footer-top">
+      <div class="footer-poem" id="footer-poem-project"></div>
+      <div>
+        <div class="footer-links" style="margin-bottom:32px;"><h4>Quick Links</h4><ul id="footer-nav-project"></ul></div>
+        <div class="footer-links"><h4>Networks</h4><ul id="footer-social-project"></ul></div>
+      </div>
+    </div>
+    <div class="footer-bottom"><span id="footer-copy-project">©2026</span><a href="#" class="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">Back To Top ↑</a></div>
+  </footer>
 </div>
 
 <!-- ══ CONTACT ══ -->
@@ -1648,6 +1658,7 @@ let loaderBeepBuffer=null;
 let loaderBeepDecodePromise=null;
 let shutterSampleBuffer=null;
 let shutterSampleDecodePromise=null;
+const LOADER_BEEP_OFFSET_SEC=0;
 const LOADER_BEEP_CLIP_SEC=.18;
 const SHUTTER_SAMPLE_OFFSET_SEC=0;
 const SHUTTER_SAMPLE_FULL_SEC=.34;
@@ -1870,7 +1881,7 @@ function playSiteNoiseBurst({when=0,duration=.05,volume=.008,attack=.002,release
 function playLoaderWarningBeep({when=0,volume=.012,pan=0,duration=.05}={}){
   if(playBufferedAudio(loaderBeepBuffer,{
     when,
-    offset:0,
+    offset:LOADER_BEEP_OFFSET_SEC,
     duration:Math.max(.03,LOADER_BEEP_CLIP_SEC*(duration/.05)),
     volume:Math.max(.12,Math.min(1,volume*34)),
     pan
@@ -2739,6 +2750,7 @@ function renderProject(i){
   ge('proj-counter').textContent=`${i+1} / ${D.projects.length}`;
   ge('proj-prev-btn').disabled=i===0;
   ge('proj-next-btn').disabled=i===D.projects.length-1;
+  renderFooter('project');
   document.title=`${p.title} — ${D.logo}`;
 }
 
@@ -3002,7 +3014,7 @@ initSiteAudioUnlock();
   const msgs = [
     'f/22 — Initializing','f/16 — Loading assets','f/11 — Building layout',
     'f/8 — Rendering','f/5.6 — Almost ready','f/4.0 — Focus locked',
-    'f/2.8 — Sharpening','f/1.4 — Say Cheese'
+    'f/2.8 — Sharpening','f/1.4 — Ready to shoot'
   ];
   const statusTimeline = [
     {when:.22,text:msgs[1]},
@@ -3134,7 +3146,7 @@ initSiteAudioUnlock();
       requestAnimationFrame(frame);
     } else {
       clearLoaderStatusTimeline();
-      statusEl.textContent = 'f/1.4 — Say Cheese';
+      statusEl.textContent = 'f/1.4 — Ready';
       playLoaderReadySound();
       // Flash then fade out loader
       playShutterSound('full');
