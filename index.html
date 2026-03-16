@@ -1642,6 +1642,7 @@ let siteAudioCtx=null;
 let siteNoiseBuffer=null;
 let siteAudioUnlocked=false;
 let siteAudioUnlockHandler=null;
+let siteAudioUnlockPromise=null;
 let lastProfileTypeSoundAt=0;
 let loaderBeepBuffer=null;
 let loaderBeepDecodePromise=null;
@@ -1737,30 +1738,44 @@ function playBufferedAudio(buffer,{when=0,offset=0,duration=null,volume=1,pan=0,
 function removeSiteAudioUnlockListeners(){
   if(!siteAudioUnlockHandler)return;
   document.removeEventListener('pointerdown',siteAudioUnlockHandler,true);
+  document.removeEventListener('pointerup',siteAudioUnlockHandler,true);
   document.removeEventListener('touchstart',siteAudioUnlockHandler,true);
+  document.removeEventListener('touchend',siteAudioUnlockHandler,true);
+  document.removeEventListener('click',siteAudioUnlockHandler,true);
   document.removeEventListener('keydown',siteAudioUnlockHandler,true);
   siteAudioUnlockHandler=null;
 }
 function unlockSiteAudio(){
   const ctx=getSiteAudioCtx();
-  if(!ctx)return;
+  if(!ctx)return Promise.resolve(false);
+  if(siteAudioUnlocked&&ctx.state==='running')return Promise.resolve(true);
+  if(siteAudioUnlockPromise)return siteAudioUnlockPromise;
   const finalize=()=>{
     siteAudioUnlocked=true;
     removeSiteAudioUnlockListeners();
+    siteAudioUnlockPromise=null;
+    return true;
   };
-  Promise.resolve(ctx.state!=='running'?ctx.resume():null).then(()=>{
+  siteAudioUnlockPromise=Promise.resolve(ctx.state!=='running'?ctx.resume():null).then(()=>{
     const src=ctx.createBufferSource();
     src.buffer=ctx.createBuffer(1,1,22050);
     src.connect(ctx.destination);
     src.start(0);
-    finalize();
-  }).catch(()=>{});
+    return finalize();
+  }).catch(()=>{
+    siteAudioUnlockPromise=null;
+    return false;
+  });
+  return siteAudioUnlockPromise;
 }
 function initSiteAudioUnlock(){
   if(siteAudioUnlocked||siteAudioUnlockHandler)return;
   siteAudioUnlockHandler=()=>unlockSiteAudio();
   document.addEventListener('pointerdown',siteAudioUnlockHandler,true);
+  document.addEventListener('pointerup',siteAudioUnlockHandler,true);
   document.addEventListener('touchstart',siteAudioUnlockHandler,true);
+  document.addEventListener('touchend',siteAudioUnlockHandler,true);
+  document.addEventListener('click',siteAudioUnlockHandler,true);
   document.addEventListener('keydown',siteAudioUnlockHandler,true);
   primeEmbeddedAudioBuffers();
   unlockSiteAudio();
@@ -1961,7 +1976,14 @@ function playShutterSample(mode='soft'){
     volume:isSoft ? .82 : 1
   });
 }
-function playShutterSound(mode='soft'){
+function playShutterSound(mode='soft',allowDeferred=true){
+  const ctx=getSiteAudioCtx();
+  if(allowDeferred&&ctx&&(!siteAudioUnlocked||ctx.state!=='running')){
+    unlockSiteAudio().then(ok=>{
+      if(ok)playShutterSound(mode,false);
+    });
+    return;
+  }
   if(playShutterSample(mode))return;
   const soft=mode!=='full';
   const click=soft ? .03 : .082;
@@ -2980,7 +3002,7 @@ initSiteAudioUnlock();
   const msgs = [
     'f/22 — Initializing','f/16 — Loading assets','f/11 — Building layout',
     'f/8 — Rendering','f/5.6 — Almost ready','f/4.0 — Focus locked',
-    'f/2.8 — Sharpening','f/1.4 — Ready to shoot'
+    'f/2.8 — Sharpening','f/1.4 — Say Cheese'
   ];
   const statusTimeline = [
     {when:.22,text:msgs[1]},
