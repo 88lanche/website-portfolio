@@ -3357,7 +3357,18 @@ initSiteAudioUnlock();
     loader.style.display = 'none';
     startSite._done = false;
     startSite();
-    showWelcome();
+    // Skip welcome overlay & intro animations — jump to final state
+    mobileHeroIntroPending = false;
+    const salon = document.getElementById('record-salon');
+    if (salon) {
+      const frames = [...salon.querySelectorAll('.record-frame')];
+      salon.classList.remove('mobile-intro', 'pre-welcome-wave');
+      salon.classList.add('color-ready');
+      frames.forEach(f => { f.classList.add('tile-in'); f.style.setProperty('--tile-delay', '0ms'); });
+    }
+    const rr = document.querySelector('.record-room');
+    if (rr) rr.classList.add('visible');
+    runDesktopHeroColorSequence();
     routeFromHash();
     return;
   }
