@@ -3524,8 +3524,13 @@ initSiteAudioUnlock();
         sessionStorage.setItem(LOADER_SEEN_KEY, 'true');
         startSite._done=false;
         startSite();
-        showWelcome();
-        routeFromHash();
+        const hashPage = (location.hash || '').replace(/^#\/?/, '').split('/')[0];
+        if (!hashPage || hashPage === 'home') {
+          showWelcome();
+        } else {
+          mobileHeroIntroPending = false;
+          routeFromHash();
+        }
       }, 150);
     }
   }
